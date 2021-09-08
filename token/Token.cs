@@ -19,7 +19,20 @@ namespace token
         LBRACE,  // {
         RBRACE,  // }
         FUNCTION, // 
-        LET
+        LET,
+        MINUS,
+        BANG,
+        ASTERISK,
+        SLASH,
+        LT,
+        GT,
+        TRUE,
+        FALSE,
+        IF,
+        ELSE,
+        RETURN,
+        EQ,
+        NOT_EQ
     }
 
     public class Token
@@ -39,6 +52,11 @@ namespace token
         {
             {"fn", TokenType.FUNCTION},
             {"let", TokenType.LET},
+            {"true", TokenType.TRUE},
+            {"false", TokenType.FALSE},
+            {"if", TokenType.IF},
+            {"else", TokenType.ELSE},
+            {"return", TokenType.RETURN}
         };
     }
 }

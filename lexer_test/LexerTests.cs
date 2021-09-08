@@ -18,6 +18,32 @@ namespace lexer_test
         }
 
         [Fact]
+        public void TestNextToken5()
+        {
+            string input = @"let five = 5;
+                            let ten = 10;
+                            let add = fn(x, y) {
+                                x + y;
+                            };
+                            let result = add(five, ten);
+                            !-/*5;
+                            5 < 10 > 5;
+                            if (5 < 10) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                            
+                            10 == 10;
+                            10 != 9;
+                            ";
+            var tests = new List<Token>() {
+            };
+
+            TestCore(input, tests);
+        }
+
+        [Fact]
         public void TestNextToken4()
         {
             string input = "let";

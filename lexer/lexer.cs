@@ -71,6 +71,15 @@ namespace lexer
             return '0' <= Ch && Ch <= '9';
         }
 
+        public byte peekChar()
+        {
+            if (ReadPosition >= Input.Length) {
+                return 0;
+            } else {
+                return (byte)Input[ReadPosition];
+            }
+        }
+
         public Token NextToken() 
         {
             Token tok = new Token();
@@ -80,8 +89,15 @@ namespace lexer
             switch ((char)Ch)
             {
                 case '=':
-                    tok.Type = ASSIGN;
-                    tok.Literal = "=";
+                    if (peekChar() == '=') {
+                        var ch = Ch;
+                        readChar();
+                        tok.Type = EQ;
+                        tok.Literal = "==";
+                    } else {
+                        tok.Type = ASSIGN;
+                        tok.Literal = "=";                      
+                    }
                     break;
                 case ';':
                     tok.Type = SEMICOLON;
@@ -110,6 +126,37 @@ namespace lexer
                 case '}':
                     tok.Type = RBRACE;
                     tok.Literal = "}";
+                    break;
+                case '-':
+                    tok.Type = MINUS;
+                    tok.Literal = "-";
+                    break;
+                case '!':
+                    if (peekChar() == '=') {
+                        var ch = Ch;
+                        readChar();
+                        tok.Type = NOT_EQ;
+                        tok.Literal = "!=";
+                    } else {
+                        tok.Type = BANG;
+                        tok.Literal = "!";
+                    }
+                    break;
+                case '/':
+                    tok.Type = SLASH;
+                    tok.Literal = "/";
+                    break;
+                case '*':
+                    tok.Type = ASTERISK;
+                    tok.Literal = "*";
+                    break;
+                case '<':
+                    tok.Type = LT;
+                    tok.Literal = "<";
+                    break;
+                case '>':
+                    tok.Type = GT;
+                    tok.Literal = ">";
                     break;
                 case '\0':
                     tok.Literal = "";
