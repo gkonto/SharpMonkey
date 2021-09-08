@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace token
 {
+
     public enum TokenType
     {
         ILLEGAL, //
@@ -24,5 +26,19 @@ namespace token
     {
         public TokenType Type { get; set; }
         public string Literal { get; set; }
+
+        public static TokenType LookupIdent(string ident)
+        {
+            if (keywords.TryGetValue(ident, out TokenType type)) {
+                return type;
+            }
+            return TokenType.IDENT;
+        }
+     
+        public static Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>()
+        {
+            {"fn", TokenType.FUNCTION},
+            {"let", TokenType.LET},
+        };
     }
 }

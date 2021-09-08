@@ -19,11 +19,12 @@
     </PackageReference>
   </ItemGroup>
 
+
   <ItemGroup>
     <ProjectReference
-      Include="..\lexer\lexer.csproj" />
-    <ProjectReference
       Include="..\token\token.csproj" />
+    <ProjectReference
+      Include="..\lexer\lexer.csproj" />
   </ItemGroup>
 
 </Project>

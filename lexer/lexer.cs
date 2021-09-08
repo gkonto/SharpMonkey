@@ -30,12 +30,53 @@ namespace lexer
                 Ch = (byte)Input[ReadPosition];
             }
             Position = ReadPosition;
-            ReadPosition +=1 ;
+            ReadPosition += 1;
+        }
+
+        public string readIdentifier()
+        {
+            int start = Position;
+
+            while (isLetter()) {
+                readChar();
+            }
+
+            //return new string($"{start} {Input.Substring(start, Position)}");
+            return Input.Substring(start, Position - start);
+        }
+
+        private bool isLetter()
+        {
+            return 'a' <= Ch && Ch <= 'z' || 'A' <= Ch && Ch <= 'Z' || Ch == '_';
+        }
+
+        public void skipWhitespace()
+        {
+            while (Ch == ' ' || Ch == '\t' || Ch == '\n' || Ch == '\r') {
+                readChar();
+            }
+        }
+
+        public string readNumber()
+        {
+            int start = Position;
+            while (isDigit()) {
+                readChar();
+            }
+            return Input.Substring(start, Position - start);
+        }
+
+        public bool isDigit()
+        {
+            return '0' <= Ch && Ch <= '9';
         }
 
         public Token NextToken() 
         {
             Token tok = new Token();
+
+            skipWhitespace();
+
             switch ((char)Ch)
             {
                 case '=':
@@ -70,9 +111,23 @@ namespace lexer
                     tok.Type = RBRACE;
                     tok.Literal = "}";
                     break;
-                default:
+                case '\0':
                     tok.Literal = "";
                     tok.Type = EOF;
+                    break;
+                default:
+                    if (isLetter()) {
+                        tok.Literal = readIdentifier();
+                        tok.Type = Token.LookupIdent(tok.Literal);
+                        return tok;      
+                    } else if (isDigit()) {
+                        tok.Type = INT;
+                        tok.Literal = readNumber();
+                        return tok;
+                    } else {
+                        tok.Type = ILLEGAL;
+                        tok.Literal = System.Text.Encoding.ASCII.GetString(new[]{Ch});
+                    }
                     break;
             }
             readChar();
