@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference
+      Include="..\lexer\lexer.csproj" />
+    <ProjectReference
+      Include="..\token\token.csproj" />
+    <ProjectReference
+      Include="..\ast\ast.csproj" />
+  </ItemGroup>
+</Project>
