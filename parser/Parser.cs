@@ -50,11 +50,25 @@ namespace parser
             return program;
         }
 
+        public ReturnStatement parseReturnStatement()
+        {
+            ReturnStatement stmt = new ReturnStatement(curToken);
+            nextToken();
+            
+            while (!curTokenIs(SEMICOLON)) {
+                nextToken();
+            }
+            
+            return stmt;
+        }
+
         public Statement? parseStatement()
         {
             switch (curToken.Type) {
                 case LET:
                     return parseLetStatement();
+                case RETURN:
+                    return parseReturnStatement();
                 default:
                     return null;
             }

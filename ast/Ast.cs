@@ -56,4 +56,20 @@ namespace ast
             return token.Literal;
         }
     }
+
+    public class ReturnStatement : Statement
+    {
+        Token token;
+        Expression returnValue;
+
+        public ReturnStatement(Token t)
+        {
+            token = t;
+        }
+
+        public override string TokenLiteral()
+        {
+            return token.Literal;
+        }
+    }
 }
