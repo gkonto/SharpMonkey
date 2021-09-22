@@ -9,6 +9,9 @@ using System.Collections.Generic;
 
 namespace parser
 {
+    public delegate Expression prefixParseFn();
+    public delegate Expression infixParseFn(Expression e);
+    
     public class Parser
     {
         lexer.Lexer lexer;

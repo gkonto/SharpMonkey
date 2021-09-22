@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using token;
+using static System.Console;
 
 namespace ast
 {
-    public class Node 
+    public abstract class Node 
     {
         public virtual string TokenLiteral() { return ""; }
+        public virtual string String() { return ""; }
     }
 
     public class Statement : Node
@@ -30,6 +32,39 @@ namespace ast
                 return "";
             }
         }
+
+        public string String()
+        {
+            string buffer = "";
+
+            foreach (Statement s in statements) {
+                buffer += s.String();
+            }
+
+            return buffer;
+        }
+    }
+
+    public class ExpressionStatement : Statement
+    {
+        public Token token;
+        Expression expression;
+        public override string TokenLiteral()
+        {
+            return token.Literal;
+        }
+
+        public override string String()
+        {
+            string buffer = "";
+
+            if (expression != null) {
+                buffer += expression.String() + "\n";
+            }
+
+            return buffer;
+        }
+
     }
 
     public class LetStatement : Statement
@@ -43,6 +78,21 @@ namespace ast
         {
             return token.Literal;
         }
+
+        public override string String()
+        {
+            string buffer = "";
+            buffer += TokenLiteral() + " ";
+            buffer += name.String();
+            buffer += " = ";
+            
+            if (value != null) {
+                buffer += value.String();
+            }
+            buffer += ";";
+
+            return buffer;
+        }
     }
 
     public class Identifier : Expression
@@ -54,6 +104,13 @@ namespace ast
         public override string TokenLiteral()
         {
             return token.Literal;
+        }
+
+        public override string String()
+        {
+            string buffer = "";
+            buffer += value;
+            return buffer;
         }
     }
 
@@ -71,5 +128,19 @@ namespace ast
         {
             return token.Literal;
         }
+
+        public override string String()
+        {
+            string buffer = "";
+            buffer += TokenLiteral() + " ";
+
+            if (returnValue != null) {
+                buffer += returnValue.String();
+            }
+            buffer += ";";
+
+            return buffer;
+        }
+
     }
 }
