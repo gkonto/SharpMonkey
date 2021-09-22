@@ -48,7 +48,7 @@ namespace ast
     public class ExpressionStatement : Statement
     {
         public Token token;
-        Expression expression;
+        public Expression expression { get; set; }
         public override string TokenLiteral()
         {
             return token.Literal;

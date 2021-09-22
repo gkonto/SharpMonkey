@@ -9,23 +9,49 @@ using System.Collections.Generic;
 
 namespace parser
 {
+
+     public enum Precedence
+    {
+        iota,
+        LOWEST,  
+        EQUALS, // == 
+        LESSGREATER,  // > or <
+        SUM, // +
+        PRODUCT,  // *
+        PREFIX, // -X and !X
+        CALL   // myfunction(X)
+    }
+
     public delegate Expression prefixParseFn();
     public delegate Expression infixParseFn(Expression e);
-    
+
     public class Parser
     {
         lexer.Lexer lexer;
         Token curToken = new Token() {Type = ILLEGAL, Literal = ""};
         Token peekToken = new Token() {Type = ILLEGAL, Literal = ""};
         public List<string> errors { set; get; }
-
+        IDictionary<TokenType, prefixParseFn> prefixParseFns = new Dictionary<TokenType, prefixParseFn>();
+        IDictionary<TokenType, infixParseFn> infixParseFns = new Dictionary<TokenType, infixParseFn>();
 
         public Parser(Lexer l)
         {
             errors = new List<string>();
             lexer = l;
+            registerPrefix(IDENT, parseIdentifier);
+
             nextToken();
             nextToken();
+        }
+
+        private void registerPrefix(TokenType tt, prefixParseFn fn)
+        {
+            prefixParseFns.Add(tt, fn);
+        }
+
+        private void registerInfix(TokenType tt, infixParseFn fn)
+        {
+            infixParseFns.Add(tt, fn);
         }
 
         public void peekError(TokenType t)
@@ -53,6 +79,11 @@ namespace parser
             return program;
         }
 
+        public Expression parseIdentifier()
+        {
+            return new Identifier() {token = curToken, value = curToken.Literal };
+        }
+
         public ReturnStatement parseReturnStatement()
         {
             ReturnStatement stmt = new ReturnStatement(curToken);
@@ -73,10 +104,33 @@ namespace parser
                 case RETURN:
                     return parseReturnStatement();
                 default:
-                    return null;
+                    return parseExpressionStatement();
             }
         }
 
+        public Expression? parseExpression(Precedence precedence)
+        {
+            prefixParseFn prefix = prefixParseFns[curToken.Type];
+            if (prefix == null) {
+                return null;
+            }
+            var leftExp = prefix();
+
+            return leftExp;
+        }
+
+        public ExpressionStatement parseExpressionStatement()
+        {
+            ExpressionStatement stmt = new ExpressionStatement() {token = curToken};
+            
+            stmt.expression = parseExpression(Precedence.LOWEST);
+            
+            if (peekTokenIs(SEMICOLON)) {
+                nextToken();
+            }
+            
+            return stmt;
+        }
 
         public LetStatement? parseLetStatement()
         {

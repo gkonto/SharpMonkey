@@ -41,6 +41,27 @@ namespace ParserTest
             }
             Assert.True(true);
         }
+        [Fact]
+        public void TestIdentifierExpression()
+        {
+            string input = "foobar;";
+            Lexer l = new Lexer(input);
+            Parser p = new Parser(l);
+            Program? program = p.ParseProgram();
+            checkParserErrors(p);
+            Assert.NotNull(program);
+            if (program != null) {
+                Assert.Equal(program.statements.Count, 1);
+                Assert.IsType<ExpressionStatement>(program.statements[0]);
+                ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
+                Assert.IsType<Identifier>(stmt.expression);
+                Identifier ident = (Identifier)stmt.expression;
+                Assert.Equal(ident.value, "foobar");
+                Assert.Equal(ident.TokenLiteral(), "foobar");
+            }
+            
+
+        }
 
         [Fact]
         public void TestReturnStatements()
@@ -52,7 +73,7 @@ namespace ParserTest
             Parser p = new Parser(l);
             Program? program = p.ParseProgram();
             checkParserErrors(p);
-            
+    
             if (program != null) {
                 Assert.Equal(3, program.statements.Count);
             }
