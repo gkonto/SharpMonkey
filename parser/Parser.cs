@@ -9,8 +9,7 @@ using System.Collections.Generic;
 
 namespace parser
 {
-
-     public enum Precedence
+    public enum Precedence
     {
         iota,
         LOWEST,  
@@ -23,7 +22,7 @@ namespace parser
     }
 
     public delegate Expression? prefixParseFn();
-    public delegate Expression? infixParseFn(Expression e);
+    public delegate Expression? infixParseFn(Expression? e);
 
     public class Parser
     {
@@ -33,6 +32,18 @@ namespace parser
         public List<string> errors { set; get; }
         IDictionary<TokenType, prefixParseFn> prefixParseFns = new Dictionary<TokenType, prefixParseFn>();
         IDictionary<TokenType, infixParseFn> infixParseFns = new Dictionary<TokenType, infixParseFn>();
+        IDictionary<TokenType, Precedence> precedences = 
+            new Dictionary<TokenType, Precedence>()
+            {
+                { EQ, Precedence.EQUALS },
+                { NOT_EQ, Precedence.EQUALS },
+                { LT, Precedence.LESSGREATER },
+                { GT, Precedence.LESSGREATER },
+                { PLUS, Precedence.SUM },
+                { MINUS, Precedence.SUM },
+                { SLASH, Precedence.PRODUCT },
+                { ASTERISK, Precedence.PRODUCT }
+            };
 
         public Parser(Lexer l)
         {
@@ -42,9 +53,33 @@ namespace parser
             registerPrefix(INT, parseIntegerLiteral);
             registerPrefix(BANG, parsePrefixExpression);
             registerPrefix(MINUS, parsePrefixExpression);
-            
+           
+            registerInfix(PLUS, parseInfixExpression);
+            registerInfix(MINUS, parseInfixExpression);
+            registerInfix(SLASH, parseInfixExpression);
+            registerInfix(ASTERISK, parseInfixExpression);
+            registerInfix(EQ, parseInfixExpression);
+            registerInfix(NOT_EQ, parseInfixExpression);
+            registerInfix(LT, parseInfixExpression);
+            registerInfix(GT, parseInfixExpression);
+
             nextToken();
             nextToken();
+        }
+
+        public Expression? parseInfixExpression(Expression? lhs)
+        {
+            InfixExpression expression = new InfixExpression() {
+                token = curToken,
+                Operator = curToken.Literal,
+                left = lhs
+            };
+
+            Precedence precedence = curPrecedence();
+            nextToken();
+            expression.right = parseExpression(precedence);
+
+            return expression;
         }
 
         public Expression? parsePrefixExpression()
@@ -69,6 +104,20 @@ namespace parser
         {
             string msg = $"no prefix parse function for {t} found";
             errors.Add(msg);
+        }
+
+        public Precedence peekPrecedence()
+        {
+            Precedence p = Precedence.LOWEST;
+            precedences.TryGetValue(peekToken.Type, out p);
+            return p;
+        }
+
+        public Precedence curPrecedence()  
+        {
+            Precedence p = Precedence.LOWEST;
+            precedences.TryGetValue(curToken.Type, out p);
+            return p;
         }
 
         public void peekError(TokenType t)
@@ -149,6 +198,15 @@ namespace parser
             }
 
             var leftExp = prefix();
+
+            while (!peekTokenIs(SEMICOLON) && precedence < peekPrecedence()) {
+                infixParseFn? infix;
+                if (!infixParseFns.TryGetValue(peekToken.Type, out infix)) {
+                    return leftExp;
+                }
+                nextToken();
+                leftExp = infix(leftExp);
+            }
 
             return leftExp;
         }

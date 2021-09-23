@@ -113,6 +113,58 @@ namespace ParserTest
         }
 
 
+        public class InfixTest
+        {
+            public string input;
+            public int leftValue;
+            public string Operator;
+            public int rightValue;
+
+            public InfixTest(string i, int lvalue, string o, int rvalue)
+            {
+                input = i;
+                leftValue = lvalue;
+                Operator = o;
+                rightValue = rvalue;
+            }
+        }
+
+        [Fact]
+        public void TestParsingInfixExpressions()
+        {
+            var tests = new List<InfixTest>() {
+                new InfixTest("5 + 5;", 5, "+", 5),
+                new InfixTest("5 - 5;", 5, "-", 5),
+                new InfixTest("5 * 5;", 5, "*", 5),
+                new InfixTest("5 / 5;", 5, "/", 5),
+                new InfixTest("5 > 5;", 5, ">", 5),
+                new InfixTest("5 < 5;", 5, "<", 5),
+                new InfixTest("5 == 5;", 5, "==", 5),
+                new InfixTest("5 != 5;", 5, "!=", 5),
+            };
+
+            foreach (InfixTest tt in tests) {
+                Lexer l = new Lexer(tt.input);
+                Parser p = new Parser(l);
+                Program? program = p.ParseProgram();
+                checkParserErrors(p);
+                Assert.NotNull(program);
+                if (program != null) {
+                    Assert.Equal(program.statements.Count, 1);
+                    Assert.IsType<ExpressionStatement>(program.statements[0]);
+                    ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
+                    Assert.IsType<InfixExpression>(stmt.expression);
+                    InfixExpression exp = (InfixExpression)stmt.expression;
+
+                    testIntegerLiteral(exp.left, tt.leftValue);
+                    Assert.Equal(exp.Operator, tt.Operator);
+                    testIntegerLiteral(exp.right, tt.rightValue);
+                }
+            }
+
+        }
+
+
         [Fact]
         public void TestIdentifierExpression()
         {
@@ -131,8 +183,6 @@ namespace ParserTest
                 Assert.Equal(ident.value, "foobar");
                 Assert.Equal(ident.TokenLiteral(), "foobar");
             }
-            
-
         }
 
         [Fact]

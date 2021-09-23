@@ -45,6 +45,32 @@ namespace ast
         }
     }
 
+    public class InfixExpression : Expression
+    {
+        public Token token;
+        public Expression left;
+        public string Operator;
+        public Expression right;
+
+        public override string TokenLiteral()
+        {
+            return token.Literal;
+        }
+
+        public override string String()
+        {
+            string input = "";
+
+            input += "(";
+            input += left.String();
+            input += " "  + Operator + " ";
+            input += right.String();
+            input += ")";
+
+            return input;
+        }
+    }
+
     public class PrefixExpression : Expression
     {
         public Token token;
