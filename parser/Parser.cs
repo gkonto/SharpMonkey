@@ -22,8 +22,8 @@ namespace parser
         CALL   // myfunction(X)
     }
 
-    public delegate Expression prefixParseFn();
-    public delegate Expression infixParseFn(Expression e);
+    public delegate Expression? prefixParseFn();
+    public delegate Expression? infixParseFn(Expression e);
 
     public class Parser
     {
@@ -39,9 +39,20 @@ namespace parser
             errors = new List<string>();
             lexer = l;
             registerPrefix(IDENT, parseIdentifier);
+            registerPrefix(INT, parseIntegerLiteral);
+            registerPrefix(BANG, parsePrefixExpression);
+            registerPrefix(MINUS, parsePrefixExpression);
+            
+            nextToken();
+            nextToken();
+        }
 
+        public Expression? parsePrefixExpression()
+        {
+            PrefixExpression expression = new PrefixExpression() {token = curToken, Operator = curToken.Literal};
             nextToken();
-            nextToken();
+            expression.right = parseExpression(Precedence.PREFIX);
+            return expression;
         }
 
         private void registerPrefix(TokenType tt, prefixParseFn fn)
@@ -52,6 +63,12 @@ namespace parser
         private void registerInfix(TokenType tt, infixParseFn fn)
         {
             infixParseFns.Add(tt, fn);
+        }
+
+        public void noPrefixParseFnError(TokenType t)
+        {
+            string msg = $"no prefix parse function for {t} found";
+            errors.Add(msg);
         }
 
         public void peekError(TokenType t)
@@ -108,12 +125,29 @@ namespace parser
             }
         }
 
-        public Expression? parseExpression(Precedence precedence)
+        public Expression? parseIntegerLiteral()
         {
-            prefixParseFn prefix = prefixParseFns[curToken.Type];
-            if (prefix == null) {
+            IntegerLiteral lit = new IntegerLiteral() {token = curToken};
+        
+            try {
+                int value = int.Parse(curToken.Literal);
+                lit.value = value;
+            } catch {
+                errors.Add($"could not parse {curToken.Literal} as integer");
                 return null;
             }
+
+            return lit;
+        }
+
+        public Expression? parseExpression(Precedence precedence)
+        {
+            prefixParseFn? prefix;
+            if (!prefixParseFns.TryGetValue(curToken.Type, out prefix)){ 
+                noPrefixParseFnError(curToken.Type);
+                return null;
+            }
+
             var leftExp = prefix();
 
             return leftExp;

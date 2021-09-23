@@ -45,6 +45,28 @@ namespace ast
         }
     }
 
+    public class PrefixExpression : Expression
+    {
+        public Token token;
+        public string Operator;
+        public Expression right;
+
+        public override string TokenLiteral()
+        {
+            return token.Literal;
+        }
+
+        public override string String()
+        {
+            string input = "";
+            input += "(";
+            input += Operator;
+            input += right.String();
+            input += ")";
+            return input;
+        }
+    }
+
     public class ExpressionStatement : Statement
     {
         public Token token;
@@ -111,6 +133,22 @@ namespace ast
             string buffer = "";
             buffer += value;
             return buffer;
+        }
+    }
+
+    public class IntegerLiteral : Expression
+    {
+        public Token token;
+        public int value;
+
+        public override string TokenLiteral()
+        {
+            return token.Literal;
+        }
+
+        public override string String()
+        {
+            return token.Literal;
         }
     }
 

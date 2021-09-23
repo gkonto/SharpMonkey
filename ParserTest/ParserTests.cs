@@ -41,6 +41,78 @@ namespace ParserTest
             }
             Assert.True(true);
         }
+
+        public class PrefixTest
+        {
+            public string input;
+            public string op;
+            public int integerValue;
+
+            public PrefixTest(string i, string o, int integer)
+            {
+                input = i;
+                op = o;
+                integerValue = integer;
+            }
+        }
+
+        private void testIntegerLiteral(Expression il, int value)
+        {
+            Assert.IsType<IntegerLiteral>(il);
+            IntegerLiteral integ = (IntegerLiteral)il;
+            Assert.Equal(integ.value, value);
+            Assert.Equal(integ.TokenLiteral(), value.ToString());
+        }
+
+        [Fact]
+        public void TestParsingPrefixExpressions()
+        {
+            var tests = new List<PrefixTest>() {
+                new PrefixTest("!5;", "!", 5),
+                new PrefixTest("-15", "-", 15),
+            };
+
+            foreach (PrefixTest tt in tests) {
+                Lexer l = new Lexer(tt.input);
+                Parser p = new Parser(l);
+                Program? program = p.ParseProgram();
+                checkParserErrors(p);
+                Assert.NotNull(program);
+                if (program != null) {
+                    Assert.Equal(program.statements.Count, 1);
+                    Assert.IsType<ExpressionStatement>(program.statements[0]);
+                    ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
+                    Assert.IsType<PrefixExpression>(stmt.expression);
+                    PrefixExpression exp = (PrefixExpression)stmt.expression;
+                    Assert.Equal(exp.Operator, tt.op);
+
+                    testIntegerLiteral(exp.right, tt.integerValue);
+                }
+            }
+        }
+
+        [Fact]
+        public void TestIntegerLiteralExpression()
+        {
+            string input = "5;";
+            Lexer l = new Lexer(input);
+            Parser p = new Parser(l);
+            Program? program = p.ParseProgram();
+            checkParserErrors(p);
+
+            Assert.NotNull(program);
+            if (program != null) {
+                Assert.Equal(program.statements.Count, 1);
+                Assert.IsType<ExpressionStatement>(program.statements[0]);
+                ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
+                Assert.IsType<IntegerLiteral>(stmt.expression);
+                IntegerLiteral literal = (IntegerLiteral)stmt.expression;
+                Assert.Equal(literal.value, 5);
+                Assert.Equal(literal.TokenLiteral(), "5");
+            }
+        }
+
+
         [Fact]
         public void TestIdentifierExpression()
         {
@@ -90,9 +162,9 @@ namespace ParserTest
         [Fact]
         public void TestLetStatements()
         {
-            string input = @"let x  5;
+            string input = @"let x = 5;
                             let y = 10;
-                            let  838383;";
+                            let foobar = 838383;";
 
             Lexer l = new Lexer(input);
             Parser p = new Parser(l);
