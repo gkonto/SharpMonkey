@@ -129,6 +129,51 @@ namespace ParserTest
             }
         }
 
+        public class OperatorPrecedenceTest
+        {
+            public OperatorPrecedenceTest(string i, string e)
+            {
+                input = i;
+                expected = e;
+            }
+
+            public string input;
+            public string expected;
+        }
+
+        [Fact]
+        public void TestOperatorPrecedenceParsing()
+        {
+            var tests = new List<OperatorPrecedenceTest>() {
+                new OperatorPrecedenceTest("-a * b", "((-a) * b)"),
+                new OperatorPrecedenceTest("!-a", "(!(-a))"),
+                new OperatorPrecedenceTest("a + b + c", "((a + b) + c)"),
+                new OperatorPrecedenceTest("a + b - c", "((a + b) - c)"),
+                new OperatorPrecedenceTest("a * b * c", "((a * b) * c)"),
+                new OperatorPrecedenceTest("a * b / c", "((a * b) / c)"),
+                new OperatorPrecedenceTest("a + b / c", "(a + (b / c))"),
+                new OperatorPrecedenceTest("a + b * c + d / e - f", "(((a + (b * c)) + (d / e)) - f)"),
+                new OperatorPrecedenceTest("3 + 4; -5 * 5", "(3 + 4)((-5) * 5)"),
+                new OperatorPrecedenceTest("5 > 4 == 3 < 4", "((5 > 4) == (3 < 4))"),
+                new OperatorPrecedenceTest("5 < 4 != 3 > 4", "((5 < 4) != (3 > 4))"),
+                new OperatorPrecedenceTest("3 + 4 * 5 == 3 * 1 + 4 * 5", "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))"),
+                new OperatorPrecedenceTest("3 + 4 * 5 == 3 * 1 + 4 * 5", "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))"),
+            };
+
+            foreach (var tt in tests) {
+                Lexer l = new Lexer(tt.input);
+                Parser p = new Parser(l);
+                Program? program = p.ParseProgram();
+                checkParserErrors(p);
+                Assert.NotNull(program);
+                if (program != null) {
+                    string actual = program.String();
+                    Assert.Equal(actual, tt.expected);
+                }
+            }
+
+        }
+
         [Fact]
         public void TestParsingInfixExpressions()
         {

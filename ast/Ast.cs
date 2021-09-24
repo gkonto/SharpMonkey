@@ -107,7 +107,7 @@ namespace ast
             string buffer = "";
 
             if (expression != null) {
-                buffer += expression.String() + "\n";
+                buffer += expression.String();
             }
 
             return buffer;
