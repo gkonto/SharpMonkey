@@ -71,6 +71,21 @@ namespace ast
         }
     }
 
+    public class Boolean : Expression
+    {
+        public Token token;
+        public bool value;
+        public override string TokenLiteral()
+        {
+            return token.Literal;
+        }
+
+        public override string String()
+        {
+            return token.Literal;
+        }
+    }
+
     public class PrefixExpression : Expression
     {
         public Token token;

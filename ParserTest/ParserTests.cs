@@ -141,10 +141,41 @@ namespace ParserTest
             public string expected;
         }
 
+        public void testIdentifier(Expression exp, string value)
+        {
+            Assert.IsType<Identifier>(exp);
+            Identifier ident = (Identifier)exp;
+            Assert.Equal(ident.value, value);
+            Assert.Equal(ident.TokenLiteral(), value);
+        }
+
+        public void TestLiteralExpression(Expression exp, object expected)
+        {
+            Type t = expected.GetType();
+            if (t.Equals(typeof(int))) {
+                testIntegerLiteral(exp, (int)expected);
+            } else if (t.Equals(typeof(string))) {
+                testIdentifier(exp, (string)expected);
+            }
+            Assert.True(true, $"type of exp not handled. Got {exp}");
+        }
+
+
+        public void testInfixExpression(Expression exp, object left,
+                                        string op, object right)
+        {
+            Assert.IsType<InfixExpression>(exp);
+            InfixExpression opExp = (InfixExpression)exp;
+            TestLiteralExpression(opExp.left, left);
+            Assert.Equal(opExp.Operator, op);
+            TestLiteralExpression(opExp.right, right);
+        }
+
         [Fact]
         public void TestOperatorPrecedenceParsing()
         {
             var tests = new List<OperatorPrecedenceTest>() {
+                /*
                 new OperatorPrecedenceTest("-a * b", "((-a) * b)"),
                 new OperatorPrecedenceTest("!-a", "(!(-a))"),
                 new OperatorPrecedenceTest("a + b + c", "((a + b) + c)"),
@@ -157,7 +188,12 @@ namespace ParserTest
                 new OperatorPrecedenceTest("5 > 4 == 3 < 4", "((5 > 4) == (3 < 4))"),
                 new OperatorPrecedenceTest("5 < 4 != 3 > 4", "((5 < 4) != (3 > 4))"),
                 new OperatorPrecedenceTest("3 + 4 * 5 == 3 * 1 + 4 * 5", "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))"),
-                new OperatorPrecedenceTest("3 + 4 * 5 == 3 * 1 + 4 * 5", "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))"),
+                new OperatorPrecedenceTest("3 + 4 * 5 == 3 * 1 + 4 * 5", "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))"),          
+                new OperatorPrecedenceTest("true", "true"),
+                new OperatorPrecedenceTest("false", "false"),
+                */
+                new OperatorPrecedenceTest("3 > 5 == false", "((3 > 5) == false)"),
+                new OperatorPrecedenceTest("3 < 5 == true","((3 < 5) == true)")
             };
 
             foreach (var tt in tests) {

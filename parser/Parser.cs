@@ -53,6 +53,8 @@ namespace parser
             registerPrefix(INT, parseIntegerLiteral);
             registerPrefix(BANG, parsePrefixExpression);
             registerPrefix(MINUS, parsePrefixExpression);
+            registerPrefix(TRUE, parseBoolean);
+            registerPrefix(FALSE, parseBoolean);
            
             registerInfix(PLUS, parseInfixExpression);
             registerInfix(MINUS, parseInfixExpression);
@@ -65,6 +67,11 @@ namespace parser
 
             nextToken();
             nextToken();
+        }
+
+        public Expression parseBoolean()
+        {
+            return new ast.Boolean() {token = curToken, value = curTokenIs(TRUE)};
         }
 
         public Expression? parseInfixExpression(Expression? lhs)
