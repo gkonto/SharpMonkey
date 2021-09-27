@@ -202,7 +202,12 @@ namespace ParserTest
                 new OperatorPrecedenceTest("true", "true"),
                 new OperatorPrecedenceTest("false", "false"),
                 new OperatorPrecedenceTest("3 > 5 == false", "((3 > 5) == false)"),
-                new OperatorPrecedenceTest("3 < 5 == true","((3 < 5) == true)")
+                new OperatorPrecedenceTest("3 < 5 == true","((3 < 5) == true)"),
+                new OperatorPrecedenceTest("1 + (2 + 3) + 4", "((1 + (2 + 3)) + 4)"),
+                new OperatorPrecedenceTest("(5 + 5) * 2", "((5 + 5) * 2)"),
+                new OperatorPrecedenceTest("2 / (5 + 5)", "(2 / (5 + 5))"),
+                new OperatorPrecedenceTest("-(5 + 5)", "(-(5 + 5))"),
+                new OperatorPrecedenceTest("!(true == true)", "(!(true == true))"),
             };
 
             foreach (var tt in tests) {

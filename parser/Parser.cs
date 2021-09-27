@@ -55,6 +55,7 @@ namespace parser
             registerPrefix(MINUS, parsePrefixExpression);
             registerPrefix(TRUE, parseBoolean);
             registerPrefix(FALSE, parseBoolean);
+            registerPrefix(LPAREN, parseGroupedExpression);
            
             registerInfix(PLUS, parseInfixExpression);
             registerInfix(MINUS, parseInfixExpression);
@@ -67,6 +68,17 @@ namespace parser
 
             nextToken();
             nextToken();
+        }
+
+        public Expression? parseGroupedExpression()
+        {
+            nextToken();
+            Expression? exp = parseExpression(Precedence.LOWEST);
+            if (!expectPeek(RPAREN)) {
+                return null;
+            }
+
+            return exp;
         }
 
         public Expression parseBoolean()
