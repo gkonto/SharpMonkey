@@ -225,6 +225,37 @@ namespace ParserTest
         }
 
         [Fact]
+        public void TestIfElseExpression()
+        {
+            //TODO
+            string input = "if (x < y> { x } else { y }";
+        }
+
+        [Fact]
+        public void TestIfExpression()
+        {
+            string input = "if (x < y) { x }";
+            Lexer l = new Lexer(input);
+            Parser p = new Parser(l);
+            Program? program = p.ParseProgram();
+            checkParserErrors(p);
+            Assert.NotNull(program);
+            if (program != null) {
+                Assert.Equal(program.statements.Count, 1);
+                Assert.IsType<ExpressionStatement>(program.statements[0]);
+                ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
+                Assert.IsType<IfExpression>(stmt.expression);
+                IfExpression exp = (IfExpression)stmt.expression;
+                testInfixExpression(exp.condition, "x", "<", "y");
+                Assert.Equal(exp.consequence.statements.Count, 1);
+                Assert.IsType<ExpressionStatement>(exp.consequence.statements[0]);
+                ExpressionStatement consequence = (ExpressionStatement)exp.consequence.statements[0];
+                testIdentifier(consequence.expression, "x");
+                Assert.Null(exp.alternative);
+            }
+        }
+
+        [Fact]
         public void TestParsingInfixExpressions()
         {
             var tests = new List<InfixTest>() {

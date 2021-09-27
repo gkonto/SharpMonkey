@@ -108,6 +108,53 @@ namespace ast
         }
     }
 
+    public class BlockStatement : Statement
+    {
+        public Token token;
+        public List<Statement> statements = new List<Statement>();
+
+        public override string TokenLiteral()
+        {
+            return token.Literal;
+        }
+
+        public override string String()
+        {
+            string buffer = "";
+            foreach (Statement s in statements) {
+                buffer += s.String();
+            }
+            return buffer;
+        }
+    }
+
+    public class IfExpression : Expression
+    {
+        public Token token;
+        public Expression condition;
+        public BlockStatement consequence;
+        public BlockStatement? alternative;
+
+        public override string TokenLiteral()
+        {
+            return token.Literal;
+        }
+
+        public override string String()
+        {
+            string buffer = "";
+            buffer += "if";
+            buffer += condition.String();
+            buffer += " ";
+            buffer += consequence.String();
+            if (alternative != null) {
+                buffer += "else";
+                buffer += alternative.String();
+            }
+            return buffer;
+        }
+    }
+
     public class ExpressionStatement : Statement
     {
         public Token token;

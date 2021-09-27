@@ -56,6 +56,7 @@ namespace parser
             registerPrefix(TRUE, parseBoolean);
             registerPrefix(FALSE, parseBoolean);
             registerPrefix(LPAREN, parseGroupedExpression);
+            registerPrefix(IF, parseIfExpression);
            
             registerInfix(PLUS, parseInfixExpression);
             registerInfix(MINUS, parseInfixExpression);
@@ -68,6 +69,51 @@ namespace parser
 
             nextToken();
             nextToken();
+        }
+
+        public BlockStatement parseBlockStatement()
+        {
+            BlockStatement block = new BlockStatement() {token = curToken};
+            nextToken();
+            while (!curTokenIs(RBRACE) && !curTokenIs(EOF)) {
+                Statement? stmt = parseStatement();
+                if (stmt != null) {
+                    block.statements.Add(stmt);
+                }
+                nextToken();
+            }
+            return block;
+        }
+
+        public Expression? parseIfExpression()
+        {
+            IfExpression expression = new IfExpression() {token = curToken};
+            if (!expectPeek(LPAREN)) {
+                return null;
+            }
+            nextToken();
+            expression.condition = parseExpression(Precedence.LOWEST);
+
+            if (!expectPeek(RPAREN)) {
+                return null;
+            }
+
+            if (!expectPeek(LBRACE)) {
+                return null;
+            }
+            
+            expression.consequence = parseBlockStatement();
+
+            if (peekTokenIs(ELSE)) {
+                nextToken();
+
+                if (!expectPeek(LBRACE)) {
+                    return null;
+                }
+                expression.alternative = parseBlockStatement();
+            }
+
+            return expression;
         }
 
         public Expression? parseGroupedExpression()
