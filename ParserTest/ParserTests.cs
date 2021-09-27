@@ -46,13 +46,13 @@ namespace ParserTest
         {
             public string input;
             public string op;
-            public int integerValue;
+            public object value;
 
-            public PrefixTest(string i, string o, int integer)
+            public PrefixTest(string i, string o, object integer)
             {
                 input = i;
                 op = o;
-                integerValue = integer;
+                value = integer;
             }
         }
 
@@ -70,6 +70,8 @@ namespace ParserTest
             var tests = new List<PrefixTest>() {
                 new PrefixTest("!5;", "!", 5),
                 new PrefixTest("-15", "-", 15),
+                new PrefixTest("!True;", "!", true),
+                new PrefixTest("!False;", "!", false)
             };
 
             foreach (PrefixTest tt in tests) {
@@ -85,8 +87,7 @@ namespace ParserTest
                     Assert.IsType<PrefixExpression>(stmt.expression);
                     PrefixExpression exp = (PrefixExpression)stmt.expression;
                     Assert.Equal(exp.Operator, tt.op);
-
-                    testIntegerLiteral(exp.right, tt.integerValue);
+                    testLiteralExpression(exp.right, tt.value);
                 }
             }
         }
@@ -116,11 +117,11 @@ namespace ParserTest
         public class InfixTest
         {
             public string input;
-            public int leftValue;
+            public object leftValue;
             public string Operator;
-            public int rightValue;
+            public object rightValue;
 
-            public InfixTest(string i, int lvalue, string o, int rvalue)
+            public InfixTest(string i, object lvalue, string o, object rvalue)
             {
                 input = i;
                 leftValue = lvalue;
@@ -149,13 +150,23 @@ namespace ParserTest
             Assert.Equal(ident.TokenLiteral(), value);
         }
 
-        public void TestLiteralExpression(Expression exp, object expected)
+        private void testBooleanLiteral(Expression expression, bool value)
+        {
+            Assert.IsType<ast.Boolean>(expression);
+            ast.Boolean bo = (ast.Boolean)expression;
+            Assert.Equal(bo.value, value);
+            Assert.Equal(bo.TokenLiteral(), value.ToString());
+        }
+
+        public void testLiteralExpression(Expression exp, object expected)
         {
             Type t = expected.GetType();
             if (t.Equals(typeof(int))) {
                 testIntegerLiteral(exp, (int)expected);
             } else if (t.Equals(typeof(string))) {
                 testIdentifier(exp, (string)expected);
+            } else if (t.Equals(typeof(bool))) {
+                testBooleanLiteral(exp, (bool)expected);
             }
             Assert.True(true, $"type of exp not handled. Got {exp}");
         }
@@ -166,16 +177,15 @@ namespace ParserTest
         {
             Assert.IsType<InfixExpression>(exp);
             InfixExpression opExp = (InfixExpression)exp;
-            TestLiteralExpression(opExp.left, left);
+            testLiteralExpression(opExp.left, left);
             Assert.Equal(opExp.Operator, op);
-            TestLiteralExpression(opExp.right, right);
+            testLiteralExpression(opExp.right, right);
         }
 
         [Fact]
         public void TestOperatorPrecedenceParsing()
         {
             var tests = new List<OperatorPrecedenceTest>() {
-                /*
                 new OperatorPrecedenceTest("-a * b", "((-a) * b)"),
                 new OperatorPrecedenceTest("!-a", "(!(-a))"),
                 new OperatorPrecedenceTest("a + b + c", "((a + b) + c)"),
@@ -191,7 +201,6 @@ namespace ParserTest
                 new OperatorPrecedenceTest("3 + 4 * 5 == 3 * 1 + 4 * 5", "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))"),          
                 new OperatorPrecedenceTest("true", "true"),
                 new OperatorPrecedenceTest("false", "false"),
-                */
                 new OperatorPrecedenceTest("3 > 5 == false", "((3 > 5) == false)"),
                 new OperatorPrecedenceTest("3 < 5 == true","((3 < 5) == true)")
             };
@@ -222,6 +231,9 @@ namespace ParserTest
                 new InfixTest("5 < 5;", 5, "<", 5),
                 new InfixTest("5 == 5;", 5, "==", 5),
                 new InfixTest("5 != 5;", 5, "!=", 5),
+                new InfixTest("True == True", true, "==", true),
+                new InfixTest("True != False", true, "!=", false),
+                new InfixTest("False == False", false, "==", false)
             };
 
             foreach (InfixTest tt in tests) {
@@ -237,9 +249,9 @@ namespace ParserTest
                     Assert.IsType<InfixExpression>(stmt.expression);
                     InfixExpression exp = (InfixExpression)stmt.expression;
 
-                    testIntegerLiteral(exp.left, tt.leftValue);
+                    testLiteralExpression(exp.left, tt.leftValue);
                     Assert.Equal(exp.Operator, tt.Operator);
-                    testIntegerLiteral(exp.right, tt.rightValue);
+                    testLiteralExpression(exp.right, tt.rightValue);
                 }
             }
 

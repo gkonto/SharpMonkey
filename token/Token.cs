@@ -52,8 +52,8 @@ namespace token
         {
             {"fn", TokenType.FUNCTION},
             {"let", TokenType.LET},
-            {"true", TokenType.TRUE},
-            {"false", TokenType.FALSE},
+            {"True", TokenType.TRUE},
+            {"False", TokenType.FALSE},
             {"if", TokenType.IF},
             {"else", TokenType.ELSE},
             {"return", TokenType.RETURN}
