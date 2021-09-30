@@ -208,6 +208,10 @@ namespace ParserTest
                 new OperatorPrecedenceTest("2 / (5 + 5)", "(2 / (5 + 5))"),
                 new OperatorPrecedenceTest("-(5 + 5)", "(-(5 + 5))"),
                 new OperatorPrecedenceTest("!(true == true)", "(!(true == true))"),
+                new OperatorPrecedenceTest("a + add(b * c) + d", "((a + add((b * c))) + d)"),
+                new OperatorPrecedenceTest("add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))", "add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))"),
+                new OperatorPrecedenceTest("add(a + b + c * d / f + g)", "add((((a + b) + ((c * d) / f)) + g))")
+            
             };
 
             foreach (var tt in tests) {
@@ -241,6 +245,29 @@ namespace ParserTest
                 expectedParams = e;
             }
         };
+
+        [Fact]
+        public void TestCallExpressionCalling()
+        {
+            string input = "add(1, 2 * 3, 4 + 5);";
+            Lexer l = new Lexer(input);
+            Parser p = new Parser(l);
+            Program? program = p.ParseProgram();
+            checkParserErrors(p);
+            Assert.NotNull(program);
+            if (program != null) {
+                Assert.Equal(program.statements.Count, 1);
+                Assert.IsType<ExpressionStatement>(program.statements[0]);
+                ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
+                Assert.IsType<CallExpression>(stmt.expression);
+                CallExpression exp = (CallExpression)stmt.expression;
+                testIdentifier(exp.function, "add");
+                Assert.Equal(exp.arguments.Count, 3);
+                testLiteralExpression(exp.arguments[0], 1);
+                testInfixExpression(exp.arguments[1], 2, "*", 3);
+                testInfixExpression(exp.arguments[2], 4, "+", 5);
+            }
+        }
 
         [Fact]
         public void TestFunctionLiteralParsing()

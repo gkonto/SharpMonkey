@@ -45,6 +45,35 @@ namespace ast
         }
     }
 
+    public class CallExpression : Expression
+    {
+        public Token token;
+        public Expression function;
+        public List<Expression?>? arguments;
+
+        public override string TokenLiteral()
+        {
+            return token.Literal;
+        }
+
+        public override string String()
+        {
+            string buffer = "";
+            List<string> args = new List<string>();
+            foreach (Expression a in arguments) {
+                args.Add(a.String());
+            }
+            buffer += function.String();
+            buffer += "(";
+            buffer += System.String.Join(", ", args.ToArray());
+            buffer += ")";
+
+
+
+            return buffer;
+        }
+    }
+
     public class FunctionLiteral : Expression
     {
         public Token token;

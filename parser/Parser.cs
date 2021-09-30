@@ -42,7 +42,8 @@ namespace parser
                 { PLUS, Precedence.SUM },
                 { MINUS, Precedence.SUM },
                 { SLASH, Precedence.PRODUCT },
-                { ASTERISK, Precedence.PRODUCT }
+                { ASTERISK, Precedence.PRODUCT },
+                { LPAREN, Precedence.CALL}
             };
 
         public Parser(Lexer l)
@@ -67,6 +68,7 @@ namespace parser
             registerInfix(NOT_EQ, parseInfixExpression);
             registerInfix(LT, parseInfixExpression);
             registerInfix(GT, parseInfixExpression);
+            registerInfix(LPAREN, parseCallExpression);
 
             nextToken();
             nextToken();
@@ -173,6 +175,38 @@ namespace parser
         {
             return new ast.Boolean() {token = curToken, value = curTokenIs(TRUE)};
         }
+
+        public Expression? parseCallExpression(Expression fun)
+        {
+            CallExpression exp = new CallExpression() {token = curToken, function = fun, arguments = parseCallArguments()};
+            return exp;    
+        }
+
+        public List<Expression?>? parseCallArguments()
+        {
+            List<Expression?> args = new List<Expression?>();
+
+            if (peekTokenIs(RPAREN)) {
+                nextToken();
+                return args;
+            }
+
+            nextToken();
+
+            args.Add(parseExpression(Precedence.LOWEST));
+            while (peekTokenIs(COMMA)) {
+                nextToken();
+                nextToken();
+                args.Add(parseExpression(Precedence.LOWEST));
+            }
+
+            if (!expectPeek(RPAREN)) {
+                return null;
+            }
+            
+            return args;
+        }
+
 
         public Expression? parseInfixExpression(Expression? lhs)
         {
