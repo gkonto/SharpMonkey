@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using token;
-using static System.Console;
+
+#nullable enable
 
 namespace ast
 {
@@ -40,9 +41,38 @@ namespace ast
             foreach (Statement s in statements) {
                 buffer += s.String();
             }
-
             return buffer;
         }
+    }
+
+    public class FunctionLiteral : Expression
+    {
+        public Token token;
+        public List<Identifier>? parameters;
+        public BlockStatement body;
+
+        public override string TokenLiteral()
+        {
+            return token.Literal;
+        }
+
+        public override string String()
+        {
+            string input = "";
+
+            input += TokenLiteral();
+            input += "(";
+            for (int i = 0; i < parameters.Count; ++i) {
+                input += parameters[i].String();
+                if (i != parameters.Count - 1) {
+                    input += ", ";
+                }
+            }
+            input += ")";
+            input += body.String();
+
+            return input;
+        } 
     }
 
     public class InfixExpression : Expression

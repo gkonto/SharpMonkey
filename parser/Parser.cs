@@ -57,6 +57,7 @@ namespace parser
             registerPrefix(FALSE, parseBoolean);
             registerPrefix(LPAREN, parseGroupedExpression);
             registerPrefix(IF, parseIfExpression);
+            registerPrefix(FUNCTION, parseFunctionLiteral);
            
             registerInfix(PLUS, parseInfixExpression);
             registerInfix(MINUS, parseInfixExpression);
@@ -83,6 +84,47 @@ namespace parser
                 nextToken();
             }
             return block;
+        }
+
+        public Expression? parseFunctionLiteral()
+        {
+            FunctionLiteral lit = new FunctionLiteral() {};
+            if (!expectPeek(LPAREN)) {
+                return null;
+            }
+
+            lit.parameters = parseFunctionParameters();
+            if (!expectPeek(LBRACE)) {
+                return null;
+            }
+            lit.body = parseBlockStatement();
+            return lit;
+        }
+
+        public List<Identifier>? parseFunctionParameters()
+        {
+            List<Identifier> identifiers = new List<Identifier>();
+
+            if (peekTokenIs(RPAREN)) {
+                nextToken();
+                return identifiers;
+            }
+
+            nextToken();
+
+            Identifier ident = new Identifier() {token = curToken, value = curToken.Literal};
+            identifiers.Add(ident);
+
+            while (peekTokenIs(COMMA)) {
+                nextToken();
+                nextToken();
+                Identifier ident2 = new Identifier() {token = curToken, value = curToken.Literal};
+                identifiers.Add(ident2);
+            }
+            if (!expectPeek(RPAREN)) {
+                return null;
+            }
+            return identifiers;
         }
 
         public Expression? parseIfExpression()

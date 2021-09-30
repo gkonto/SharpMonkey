@@ -231,6 +231,81 @@ namespace ParserTest
             string input = "if (x < y> { x } else { y }";
         }
 
+        class FunctionLiteralParsingCase
+        {
+            public string input;
+            public List<string> expectedParams;
+            public FunctionLiteralParsingCase(string i, List<string> e)
+            {
+                input = i;
+                expectedParams = e;
+            }
+        };
+
+        [Fact]
+        public void TestFunctionLiteralParsing()
+        {
+            string input = "fn(x, y) {x + y; }";
+
+            Lexer l = new Lexer(input);
+            Parser p = new Parser(l);
+            Program? program = p.ParseProgram();
+            checkParserErrors(p);
+            Assert.NotNull(program);
+            if (program != null)
+            {
+                Assert.Equal(program.statements.Count, 1);
+                Assert.IsType<ExpressionStatement>(program.statements[0]);
+                ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
+                Assert.IsType<FunctionLiteral>(stmt.expression);
+                FunctionLiteral function = (FunctionLiteral)stmt.expression;
+
+                Assert.NotNull(function.parameters);
+                if (function.parameters != null)
+                {
+                    Assert.Equal(function.parameters.Count, 2);
+                    testLiteralExpression(function.parameters[0], "x");
+                    testLiteralExpression(function.parameters[1], "y");
+                }
+                Assert.Equal(function.body.statements.Count, 1);
+                Assert.IsType<ExpressionStatement>(function.body.statements[0]);
+                ExpressionStatement bodyStmt = (ExpressionStatement)function.body.statements[0];
+                testInfixExpression(bodyStmt.expression, "x", "+", "y");
+            }
+        }
+
+        [Fact]
+        public void TestFunctionParameterParsing()
+        {
+            var tests = new List<FunctionLiteralParsingCase>() {
+                new FunctionLiteralParsingCase("fn() {};", new List<string>() {}),
+                new FunctionLiteralParsingCase("fn(x) {};", new List<string>() {"x"}),
+                new FunctionLiteralParsingCase("fn(x, y, z) {};", new List<string>() {"x", "y", "z"})
+            };
+            
+            foreach (var tt in tests) {
+                Lexer l = new Lexer(tt.input);
+                Parser p = new Parser(l);
+                Program? program = p.ParseProgram();
+                checkParserErrors(p);
+                Assert.NotNull(program);
+                if (program != null) {
+                    Assert.IsType<ExpressionStatement>(program.statements[0]);
+                    ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
+                    Assert.IsType<FunctionLiteral>(stmt.expression);
+                    FunctionLiteral function = (FunctionLiteral)stmt.expression;
+
+                    Assert.NotNull(function.parameters);
+                    if (function.parameters != null) {
+                        Assert.Equal(function.parameters.Count, tt.expectedParams.Count);
+                        for (int i = 0; i < tt.expectedParams.Count; ++i) {
+                            testLiteralExpression(function.parameters[i], tt.expectedParams[i]);
+                        }
+                    }
+                }
+            }
+        }
+
         [Fact]
         public void TestIfExpression()
         {
