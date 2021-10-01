@@ -1,11 +1,23 @@
 using static System.Console;
+using System.Collections.Generic;
 using lexer;
+using parser;
+using ast;
+
+#nullable enable
 
 namespace repl
 {
     public class Repl
     {
         private const string prompt = ">> ";
+
+        public static void printParserErrors(List<string> errors)
+        {
+            foreach (string msg in errors) {
+                WriteLine($"\t{msg}");
+            }
+        }
 
         public static void start()
         {
@@ -16,10 +28,16 @@ namespace repl
                 if (input.Length == 0) {
                     break;
                 }
-                var l = new Lexer(input);
+                Lexer l = new Lexer(input);
+                Parser p = new Parser(l);
+                Program? program = p.ParseProgram();
 
-                for (var tok = l.NextToken(); tok.Type != token.TokenType.EOF; tok = l.NextToken()) {
-                    WriteLine($"Type: {tok.Type} - Literal: {tok.Literal}");
+                if (program != null) {
+                    if (p.errors.Count != 0) {
+                        printParserErrors(p.errors);
+                        continue;
+                    }
+                    WriteLine(program.String());
                 }
             }
         }

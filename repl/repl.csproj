@@ -7,6 +7,10 @@
   <ItemGroup>
     <ProjectReference
       Include="..\lexer\lexer.csproj" />
+  <ProjectReference
+      Include="..\parser\parser.csproj" />    
+  <ProjectReference
+      Include="..\ast\ast.csproj" />   
   </ItemGroup>
 
 </Project>
