@@ -440,36 +440,45 @@ namespace ParserTest
             }
         }
 
+        public class TestLetStatementCase
+        {
+            public string input;
+            public string expectedIdentifier;
+            public object expectedValue;
+
+            public TestLetStatementCase(string i, string e, object ev)
+            {
+                input = i;
+                expectedIdentifier = e;
+                expectedValue = ev;
+            }
+        }
         [Fact]
         public void TestLetStatements()
         {
-            string input = @"let x = 5;
-                            let y = 10;
-                            let foobar = 838383;";
+            List<TestLetStatementCase> tests = new List<TestLetStatementCase>() {
+                new TestLetStatementCase("let x = 5;", "x", 5),
+                new TestLetStatementCase("let y = True;", "y", true),
+                new TestLetStatementCase("let foobar = y;", "foobar", "y")
+            };
 
-            Lexer l = new Lexer(input);
-            Parser p = new Parser(l);
+            foreach (TestLetStatementCase tt in tests) {
+                Lexer l = new Lexer(tt.input);
+                Parser p = new Parser(l);
+                
+                Program? program = p.ParseProgram();
+                checkParserErrors(p);
+                Assert.NotNull(program);
             
-            Program? program = p.ParseProgram();
-            checkParserErrors(p);
-            
-            Assert.NotNull(program);
-            
-            if (program != null) {
-                Assert.Equal(3, program.statements.Count);
-            }
-            
-            var tests = new List<string>() { "x", "y", "foobar" };
-
-            for (int i = 0; i < tests.Count; ++i) {
-                string tt = tests[i];
                 if (program != null) {
-                    var stmt = program.statements[i];
-                    testLetStatement(stmt, tt);
+                    Assert.Equal(1, program.statements.Count);
+                    Statement stmt = program.statements[0];
+                    testLetStatement(stmt, tt.expectedIdentifier);
+                    Assert.IsType<LetStatement>(stmt);
+                    LetStatement lstmt = (LetStatement)stmt;
+                    testLiteralExpression(lstmt.value, tt.expectedValue);
                 }
             }
-            /*
-            */
         }
     }
 }

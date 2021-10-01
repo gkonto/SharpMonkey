@@ -240,7 +240,7 @@ namespace ast
     {
         public Token token;
         public Identifier name;
-        public Expression value;
+        public Expression? value;
 
         public void statementNode() {}
         public override string TokenLiteral()
@@ -301,8 +301,8 @@ namespace ast
 
     public class ReturnStatement : Statement
     {
-        Token token;
-        Expression returnValue;
+        public Token token;
+        public Expression? returnValue;
 
         public ReturnStatement(Token t)
         {

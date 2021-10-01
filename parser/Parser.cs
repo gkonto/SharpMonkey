@@ -295,8 +295,10 @@ namespace parser
         {
             ReturnStatement stmt = new ReturnStatement(curToken);
             nextToken();
+
+            stmt.returnValue = parseExpression(Precedence.LOWEST);
             
-            while (!curTokenIs(SEMICOLON)) {
+            if (peekTokenIs(SEMICOLON)) {
                 nextToken();
             }
             
@@ -379,9 +381,10 @@ namespace parser
                 return null;
             }
 
-            //TODO: We're skipping the expression until we
-            // encounter a semicolon
-            while (!curTokenIs(SEMICOLON)) {
+            nextToken();
+            stmt.value = parseExpression(Precedence.LOWEST);
+
+            if (peekTokenIs(SEMICOLON)) {
                 nextToken();
             }
 
