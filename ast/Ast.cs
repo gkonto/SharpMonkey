@@ -21,7 +21,7 @@ namespace ast
 
     }
 
-    public class Program 
+    public class Program : Node
     {
         public List<Statement> statements = new List<Statement>();
 
