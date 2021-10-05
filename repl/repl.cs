@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using lexer;
 using parser;
 using ast;
+using obj;
+using evaluator;
 
 #nullable enable
 
@@ -38,6 +40,10 @@ namespace repl
                         continue;
                     }
                     WriteLine(program.String());
+                }
+                obj.Object evaluated = Evaluator.Eval(program);
+                if (evaluated != null) {
+                    WriteLine(evaluated.Inspect());
                 }
             }
         }

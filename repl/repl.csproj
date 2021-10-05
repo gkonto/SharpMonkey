@@ -10,7 +10,11 @@
   <ProjectReference
       Include="..\parser\parser.csproj" />    
   <ProjectReference
-      Include="..\ast\ast.csproj" />   
+      Include="..\ast\ast.csproj" />  
+  <ProjectReference
+      Include="..\object\object.csproj" />   
+  <ProjectReference
+      Include="..\evaluator\evaluator.csproj" />
   </ItemGroup>
 
 </Project>
