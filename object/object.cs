@@ -21,7 +21,7 @@ namespace obj
 
     public class Boolean : Object
     {
-        bool Value;
+        public bool Value;
         public string Inspect() { return Value.ToString(); }
         public string Type() { return Object.BOOLEAN_OBJ; }
     }

@@ -24,6 +24,31 @@ namespace evaluator_test
             }
         }
 
+        private class TestEvalBooleanExpressionCase
+        {
+            public string input { get; set; }
+            public bool expected { get; set; }
+            public TestEvalBooleanExpressionCase(string i, bool e)
+            {
+                input = i;
+                expected = e;
+            }
+        }
+
+        [Fact]
+        public void TestEvalBooleanExpression()
+        {
+            var tests = new List<TestEvalBooleanExpressionCase>() {
+                new TestEvalBooleanExpressionCase("true", true),
+                new TestEvalBooleanExpressionCase("false", false)
+            };
+
+            foreach (TestEvalBooleanExpressionCase tt in tests) {
+                obj.Object evaluated = testEval(tt.input);
+                testBooleanObject(evaluated, tt.expected);
+            }
+        }
+
         [Fact]
         public void TestEvalIntegerExpression()
         {
@@ -50,6 +75,13 @@ namespace evaluator_test
         {
             Assert.IsType<Integer>(obj);
             Integer result = (Integer)obj;
+            Assert.Equal(result.Value, expected);
+        }
+
+        private void testBooleanObject(obj.Object obj, bool expected)
+        {
+            Assert.IsType<obj.Boolean>(obj);
+            obj.Boolean result = (obj.Boolean)obj;
             Assert.Equal(result.Value, expected);
         }
     }
