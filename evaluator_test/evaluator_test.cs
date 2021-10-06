@@ -35,15 +35,47 @@ namespace evaluator_test
             }
         }
 
+
         [Fact]
         public void TestEvalBooleanExpression()
         {
             var tests = new List<TestEvalBooleanExpressionCase>() {
-                new TestEvalBooleanExpressionCase("true", true),
-                new TestEvalBooleanExpressionCase("false", false)
+                new TestEvalBooleanExpressionCase("True", true),
+                new TestEvalBooleanExpressionCase("False", false)
             };
 
             foreach (TestEvalBooleanExpressionCase tt in tests) {
+                obj.Object evaluated = testEval(tt.input);
+                testBooleanObject(evaluated, tt.expected);
+            }
+        }
+
+
+        
+        private class TestBangOperatorCase
+        {
+            public string input { get; set; }
+            public bool expected { get; set; }
+            public TestBangOperatorCase(string i, bool e)
+            {
+                input = i;
+                expected = e;
+            }
+        }
+
+        [Fact]
+        public void TestBangOperator()
+        {
+            var tests = new List<TestBangOperatorCase>() {
+                new TestBangOperatorCase("!True", false),
+                new TestBangOperatorCase("!False", true),
+                new TestBangOperatorCase("!5", false),
+                new TestBangOperatorCase("!!True", true),
+                new TestBangOperatorCase("!!False", false),
+                new TestBangOperatorCase("!!5", true)
+            };
+
+            foreach (TestBangOperatorCase tt in tests) {
                 obj.Object evaluated = testEval(tt.input);
                 testBooleanObject(evaluated, tt.expected);
             }
@@ -55,6 +87,8 @@ namespace evaluator_test
             var tests = new List<TestEvalIntegerExpressionCase>() {
                 new TestEvalIntegerExpressionCase("5", 5),
                 new TestEvalIntegerExpressionCase("10", 10),
+                new TestEvalIntegerExpressionCase("-5", -5),
+                new TestEvalIntegerExpressionCase("-10", -10)
             };
 
             foreach (TestEvalIntegerExpressionCase tt in tests) {

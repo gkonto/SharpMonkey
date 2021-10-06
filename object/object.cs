@@ -26,7 +26,7 @@ namespace obj
         public string Type() { return Object.BOOLEAN_OBJ; }
     }
 
-    class Null : Object
+    public class Null : Object
     {
         public string Inspect() { return Object.NULL_OBJ; }
         public string Type() { return "null"; }

@@ -39,7 +39,6 @@ namespace repl
                         printParserErrors(p.errors);
                         continue;
                     }
-                    WriteLine(program.String());
                 }
                 obj.Object evaluated = Evaluator.Eval(program);
                 if (evaluated != null) {
