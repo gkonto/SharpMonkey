@@ -29,9 +29,53 @@ namespace evaluator
                 PrefixExpression p = (ast.PrefixExpression)node;
                 obj.Object right = Eval(p.right);
                 return evalPrefixExpression(p.Operator, right);
+            } else if (t == typeof(ast.InfixExpression)) {
+                ast.InfixExpression ie = (InfixExpression)node;
+                obj.Object left = Eval(ie.left);
+                obj.Object right = Eval(ie.right);
+                return evalInfixExpression(ie.Operator, left, right);
             }
 
             return null;
+        }
+        
+        public static obj.Object evalIntegerInfixExpression(string op, obj.Object left, obj.Object right)
+        {
+            int leftVal = ((Integer)left).Value;
+            int rightVal = ((Integer)right).Value;
+
+            if (op == "+") {
+                return new Integer {Value = leftVal + rightVal};
+            } else if (op == "-") {
+                return new Integer {Value = leftVal - rightVal};
+            } else if (op == "*") {
+                return new Integer {Value = leftVal * rightVal};
+            } else if (op == "/") {
+                return new Integer {Value = leftVal / rightVal};
+            } else if (op == "<") {
+                return nativeBoolToBooleanObject(leftVal < rightVal);
+            } else if (op == ">") {
+                return nativeBoolToBooleanObject(leftVal > rightVal);
+            } else if (op == "==") {
+                return nativeBoolToBooleanObject(leftVal == rightVal);
+            } else if (op == "!=") {
+                return nativeBoolToBooleanObject(leftVal != rightVal);
+            } else {
+                return NULL;
+            }
+        }
+
+        public static obj.Object evalInfixExpression(string op, obj.Object left, obj.Object right)
+        {
+            if (left.Type() == obj.Object.INTEGER_OBJ && right.Type() == obj.Object.INTEGER_OBJ) {
+                return evalIntegerInfixExpression(op, left, right);
+            } else if (op == "==") {
+                return nativeBoolToBooleanObject(left == right);
+            } else if (op == "!=") {
+                return nativeBoolToBooleanObject(left != right);
+            } else {
+                return NULL;
+            }
         }
 
         public static obj.Object evalPrefixExpression(string op, obj.Object right)

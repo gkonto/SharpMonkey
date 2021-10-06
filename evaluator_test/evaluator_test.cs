@@ -41,7 +41,24 @@ namespace evaluator_test
         {
             var tests = new List<TestEvalBooleanExpressionCase>() {
                 new TestEvalBooleanExpressionCase("True", true),
-                new TestEvalBooleanExpressionCase("False", false)
+                new TestEvalBooleanExpressionCase("False", false),
+                new TestEvalBooleanExpressionCase("1 < 2", true),
+                new TestEvalBooleanExpressionCase("1 > 2", false),
+                new TestEvalBooleanExpressionCase("1 < 1", false),
+                new TestEvalBooleanExpressionCase("1 > 1", false),
+                new TestEvalBooleanExpressionCase("1 == 1", true),
+                new TestEvalBooleanExpressionCase("1 != 1", false),
+                new TestEvalBooleanExpressionCase("1 == 2", false),
+                new TestEvalBooleanExpressionCase("1 != 2", true),
+                new TestEvalBooleanExpressionCase("True == True", true),
+                new TestEvalBooleanExpressionCase("False == False", true),
+                new TestEvalBooleanExpressionCase("True == False", false),
+                new TestEvalBooleanExpressionCase("True != False", true),
+                new TestEvalBooleanExpressionCase("False != True", true),
+                new TestEvalBooleanExpressionCase("(1 < 2) == True", true),
+                new TestEvalBooleanExpressionCase("(1 < 2) == False", false),
+                new TestEvalBooleanExpressionCase("(1 > 2) == True", false),
+                new TestEvalBooleanExpressionCase("(1 > 2) == False", true),
             };
 
             foreach (TestEvalBooleanExpressionCase tt in tests) {
@@ -88,7 +105,18 @@ namespace evaluator_test
                 new TestEvalIntegerExpressionCase("5", 5),
                 new TestEvalIntegerExpressionCase("10", 10),
                 new TestEvalIntegerExpressionCase("-5", -5),
-                new TestEvalIntegerExpressionCase("-10", -10)
+                new TestEvalIntegerExpressionCase("-10", -10),
+                new TestEvalIntegerExpressionCase("5 + 5 + 5 + 5 - 10", 10),
+                new TestEvalIntegerExpressionCase("2 * 2 * 2 * 2 * 2", 32),
+                new TestEvalIntegerExpressionCase("-50 + 100 + -50", 0),
+                new TestEvalIntegerExpressionCase("5 * 2 + 10", 20),
+                new TestEvalIntegerExpressionCase("5 + 2 * 10", 25),
+                new TestEvalIntegerExpressionCase("20 + 2 * -10", 0),
+                new TestEvalIntegerExpressionCase("50 / 2 * 2 + 10", 60),
+                new TestEvalIntegerExpressionCase("2 * (5 + 10)", 30),
+                new TestEvalIntegerExpressionCase("3 * 3 * 3 + 10", 37),
+                new TestEvalIntegerExpressionCase("3 * (3 * 3) + 10", 37),
+                new TestEvalIntegerExpressionCase("(5 + 10 * 2 + 15 / 3) * 2 + -10", 50),
             };
 
             foreach (TestEvalIntegerExpressionCase tt in tests) {
