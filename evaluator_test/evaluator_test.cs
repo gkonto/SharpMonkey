@@ -36,6 +36,78 @@ namespace evaluator_test
         }
 
 
+        private class TestIfElseExpressionsCase
+        {
+            public string input { get; set; }
+            public object? expected { get; set; }
+            public TestIfElseExpressionsCase(string i, object? e)
+            {
+                input = i;
+                expected = e;
+            }
+        }
+
+        private class TestReturnStatementsCase
+        {
+            public string input { get; set; }
+            public int expected { get; set; }
+            public TestReturnStatementsCase(string i, int e)
+            {
+                input = i;
+                expected = e;
+            }
+        }
+
+        [Fact]
+        public void TestReturnStatements()
+        {
+            var tests = new List<TestReturnStatementsCase>() {
+                new TestReturnStatementsCase("return 10;", 10),
+                new TestReturnStatementsCase("return 10; 9;", 10),
+                new TestReturnStatementsCase("return 2 * 5; 9;", 10),
+                new TestReturnStatementsCase("9; return 2 * 5; 9;", 10),
+                new TestReturnStatementsCase("if (10 > 1) { if (10 > 1) { return 10; } return 1; }", 10),
+
+            };
+
+            foreach (TestReturnStatementsCase tt in tests) {
+                obj.Object evaluated = testEval(tt.input);
+                testIntegerObject(evaluated, tt.expected);
+            }
+        }
+
+
+        [Fact]
+        public void TestIfElseExpressions()
+        {
+             var tests = new List<TestIfElseExpressionsCase>() {
+                new TestIfElseExpressionsCase("if (True) { 10 }", 10),
+                new TestIfElseExpressionsCase("if (False) { 10 }", null),
+                new TestIfElseExpressionsCase("if (1) { 10 }", 10),
+                new TestIfElseExpressionsCase("if (1 < 2) { 10 }", 10),
+                new TestIfElseExpressionsCase("if (1 > 2) { 10 }", null),
+                new TestIfElseExpressionsCase("if (1 > 2) { 10 } else { 20 }", 20),
+                new TestIfElseExpressionsCase("if (1 < 2) { 10 } else { 20 }", 10)
+             };
+             
+            foreach (TestIfElseExpressionsCase tt in tests) {
+                obj.Object evaluated = testEval(tt.input);
+                if (tt.expected == null) {
+                    testNullObject(evaluated);
+                } else {
+                    Type t = tt.expected.GetType();
+                    if (t == typeof(int)) {
+                        testIntegerObject(evaluated, (int)tt.expected);
+                    }
+                }
+            }
+        }
+
+        private void testNullObject(obj.Object obj)
+        {
+            Assert.Equal(obj, Evaluator.NULL);
+        }
+
         [Fact]
         public void TestEvalBooleanExpression()
         {
@@ -66,8 +138,6 @@ namespace evaluator_test
                 testBooleanObject(evaluated, tt.expected);
             }
         }
-
-
         
         private class TestBangOperatorCase
         {

@@ -18,7 +18,7 @@ namespace evaluator
                 return new Integer {Value = ((IntegerLiteral)node).value};
             } else if (t == typeof(Program)) {
                 Program p = (Program)node;
-                return evalStatements(p.statements);
+                return evalProgram(p);
             } else if (t == typeof(ExpressionStatement)) {
                 ExpressionStatement stmt = (ExpressionStatement)node;
                 return Eval(stmt.expression);
@@ -34,9 +34,70 @@ namespace evaluator
                 obj.Object left = Eval(ie.left);
                 obj.Object right = Eval(ie.right);
                 return evalInfixExpression(ie.Operator, left, right);
+            } else if (t == typeof(ast.BlockStatement)) {
+                ast.BlockStatement bs = (ast.BlockStatement)node;
+                return evalBlockStatement(bs);
+            } else if (t == typeof(ast.IfExpression)) {
+                ast.IfExpression ie = (ast.IfExpression)node;
+                return evalIfExpression(ie);
+            } else if (t == typeof(ast.ReturnStatement)) {
+                ast.ReturnStatement rs = (ast.ReturnStatement)node;
+                obj.Object val = Eval(rs.returnValue);
+                return new obj.ReturnValue{Value = val};
             }
 
             return null;
+        }
+
+        private static obj.Object evalIfExpression(ast.IfExpression ie)
+        {
+            obj.Object condition = Eval(ie.condition);
+            if (isTruthy(condition)) {
+                return Eval(ie.consequence);
+            } else if (ie.alternative != null) {
+                return Eval(ie.alternative);
+            } else {
+                return NULL;
+            }
+        }
+
+        private static obj.Object evalProgram(Program program)
+        {
+            obj.Object result = null;
+            foreach (Statement s in program.statements) {
+                result = Eval(s);
+                Type t = result.GetType();
+                if (t == typeof(ReturnValue)) {
+                    ReturnValue rv = (ReturnValue)result;
+                    return rv.Value;
+                }
+            }
+            return result;
+        }
+
+        private static obj.Object evalBlockStatement(BlockStatement bs)
+        {
+            obj.Object result = null;
+            foreach (Statement s in bs.statements) {
+                result = Eval(s);
+                if (result != null && result.Type() == obj.Object.RETURN_VALUE_OBJ) {
+                    return result;
+                }
+            }
+            return result;
+        }
+
+        public static bool isTruthy(obj.Object obj)
+        {
+            if (obj == NULL) {
+                return false;
+            } else if (obj == TRUE) {
+                return true;
+            } else if (obj == FALSE) {
+                return false;
+            } else {
+                return true;
+            }
         }
         
         public static obj.Object evalIntegerInfixExpression(string op, obj.Object left, obj.Object right)
@@ -124,6 +185,11 @@ namespace evaluator
 
             foreach(Statement stmt in stmts) {
                 result = Eval(stmt);
+                Type t = result.GetType();
+                if (t == typeof(obj.ReturnValue)) {
+                    obj.ReturnValue r = (obj.ReturnValue)result;
+                    return r.Value;
+                }
             }
             
             return result;
