@@ -9,6 +9,10 @@
         Include="..\ast\ast.csproj" />
     <ProjectReference
         Include="..\object\object.csproj" />
+    <ProjectReference
+        Include="..\menvironment\menvironment.csproj" />
+    <ProjectReference
+        Include="..\evalobject\evalobject.csproj" />
   </ItemGroup>
 
 </Project>

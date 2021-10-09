@@ -1,93 +1,193 @@
 ﻿using System;
 using ast;
-using obj;
 using System.Collections.Generic;
+using menvironment;
+using evalobject;
+
+#nullable enable
 
 
 namespace evaluator
 {
     public class Evaluator
     {
-        public static readonly obj.Boolean TRUE = new obj.Boolean { Value = true };
-        public readonly static obj.Boolean FALSE = new obj.Boolean { Value = false };
-        public readonly static obj.Null  NULL = new obj.Null();
-        public static obj.Object Eval(Node node)
+        public static readonly evalobject.Boolean TRUE = new evalobject.Boolean { Value = true };
+        public readonly static evalobject.Boolean FALSE = new evalobject.Boolean { Value = false };
+        public readonly static evalobject.Null  NULL = new evalobject.Null();
+        public static evalobject.EvalObject Eval(Node node, MEnvironment env)
         {
             Type t = node.GetType();
             if (t == typeof(IntegerLiteral)) {
                 return new Integer {Value = ((IntegerLiteral)node).value};
             } else if (t == typeof(Program)) {
                 Program p = (Program)node;
-                return evalProgram(p);
+                return evalProgram(p, env);
             } else if (t == typeof(ExpressionStatement)) {
                 ExpressionStatement stmt = (ExpressionStatement)node;
-                return Eval(stmt.expression);
+                return Eval(stmt.expression, env);
             } else if (t == typeof(ast.Boolean)) {
                 ast.Boolean b = (ast.Boolean)node;
                 return nativeBoolToBooleanObject(b.value);
             } else if (t == typeof(ast.PrefixExpression)) {
                 PrefixExpression p = (ast.PrefixExpression)node;
-                obj.Object right = Eval(p.right);
+                EvalObject right = Eval(p.right, env);
                 return evalPrefixExpression(p.Operator, right);
             } else if (t == typeof(ast.InfixExpression)) {
                 ast.InfixExpression ie = (InfixExpression)node;
-                obj.Object left = Eval(ie.left);
-                obj.Object right = Eval(ie.right);
+                EvalObject left = Eval(ie.left, env);
+                EvalObject right = Eval(ie.right, env);
                 return evalInfixExpression(ie.Operator, left, right);
             } else if (t == typeof(ast.BlockStatement)) {
                 ast.BlockStatement bs = (ast.BlockStatement)node;
-                return evalBlockStatement(bs);
+                return evalBlockStatement(bs, env);
             } else if (t == typeof(ast.IfExpression)) {
                 ast.IfExpression ie = (ast.IfExpression)node;
-                return evalIfExpression(ie);
+                return evalIfExpression(ie, env);
             } else if (t == typeof(ast.ReturnStatement)) {
                 ast.ReturnStatement rs = (ast.ReturnStatement)node;
-                obj.Object val = Eval(rs.returnValue);
-                return new obj.ReturnValue{Value = val};
+                EvalObject val = Eval(rs.returnValue, env);
+                return new evalobject.ReturnValue{Value = val};
+            } else if (t == typeof(ast.LetStatement)) {
+                ast.LetStatement ls = (ast.LetStatement)node;
+                EvalObject val = Eval(ls.value, env);
+                if (isError(val)) {
+                    return val;
+                }
+                env.Set(ls.name.value, val);
+            } else if (t == typeof(ast.Identifier)) {
+                ast.Identifier i = (ast.Identifier)node;
+                return evalIdentifier(i, env);  
+            } else if (t == typeof(ast.FunctionLiteral)) {
+                FunctionLiteral fl = (FunctionLiteral)node;
+                List<Identifier>? p = fl.parameters;
+                BlockStatement b = fl.body;
+                return new Function() { Parameters = p, Env = env, Body = b};
+            } else if (t == typeof(ast.CallExpression)) {
+                CallExpression ce = (ast.CallExpression)node;
+                EvalObject function = Eval(ce.function, env);
+                if (isError(function)) {
+                    return function;
+                }
+
+                List<EvalObject> args = evalExpressions(ce.arguments, env);
+                if (args.Count == 1 && isError(args[0])) {
+                    return args[0];
+                }
+                return applyFunction(function, args);
             }
 
             return null;
         }
 
-        private static obj.Object evalIfExpression(ast.IfExpression ie)
+        private static EvalObject applyFunction(EvalObject fn, List<EvalObject> args)
         {
-            obj.Object condition = Eval(ie.condition);
+            if (fn.GetType() != typeof(Function)) {
+                return new Error($"not a function: {fn.Type()}");
+            }
+            Function function = (Function)fn;   
+            MEnvironment extendedEnv = extendFunctionEnv(function, args);
+            EvalObject evaluated = Eval(function.Body, extendedEnv);
+            return unwrapReturnValue(evaluated);
+        }
+
+        private static MEnvironment extendFunctionEnv(Function fn, List<EvalObject> args)
+        {
+            MEnvironment env = new MEnvironment(fn.Env);
+            for (int i = 0; i < fn.Parameters.Count; i++) {
+                env.Set(fn.Parameters[i].value, args[i]);
+            }
+            return env;
+        }
+
+        private static EvalObject unwrapReturnValue(EvalObject obj)
+        {
+            Type t = obj.GetType();
+            if (t == typeof(ReturnValue)) {
+                ReturnValue rv = (ReturnValue)obj;
+                return rv.Value;
+            }
+            return obj;
+        }
+
+
+
+        private static List<EvalObject> evalExpressions(List<Expression> exps, MEnvironment env)
+        {
+            List<EvalObject> result = new List<EvalObject>();
+            foreach (Expression e in exps) {
+                EvalObject evaluated = Eval(e, env);
+                if (isError(evaluated)) {
+                    result.Add(evaluated);
+                    return result;
+                }
+                result.Add(evaluated);
+            }
+            return result;
+        }
+
+        private static EvalObject evalIdentifier(ast.Identifier ident, MEnvironment env)
+        {
+            EvalObject? o = env.Get(ident.value);
+            if (o == null) {
+                return new Error($"identifier not found: {ident.value}");
+            }
+            return o;
+        }
+
+        private static bool isError(EvalObject? o)
+        {
+            if (o != null) {
+                return o.Type() == EvalObject.ERROR_OBJ;
+            }
+            return false;
+        }
+
+        private static EvalObject evalIfExpression(ast.IfExpression ie, MEnvironment env)
+        {
+            EvalObject condition = Eval(ie.condition, env);
             if (isTruthy(condition)) {
-                return Eval(ie.consequence);
+                return Eval(ie.consequence, env);
             } else if (ie.alternative != null) {
-                return Eval(ie.alternative);
+                return Eval(ie.alternative, env);
             } else {
                 return NULL;
             }
         }
 
-        private static obj.Object evalProgram(Program program)
+        private static EvalObject evalProgram(Program program, MEnvironment env)
         {
-            obj.Object result = null;
+            EvalObject result = null;
             foreach (Statement s in program.statements) {
-                result = Eval(s);
-                Type t = result.GetType();
-                if (t == typeof(ReturnValue)) {
-                    ReturnValue rv = (ReturnValue)result;
-                    return rv.Value;
+                result = Eval(s, env);
+                if (result != null) {
+                    Type t = result.GetType();
+                    if (t == typeof(ReturnValue)) {
+                        ReturnValue rv = (ReturnValue)result;
+                        return rv.Value;
+                    } else if (t == typeof(Error)) {
+                        return result;
+                    }
                 }
             }
             return result;
         }
 
-        private static obj.Object evalBlockStatement(BlockStatement bs)
+        private static EvalObject evalBlockStatement(BlockStatement bs, MEnvironment env)
         {
-            obj.Object result = null;
+            EvalObject result = null;
             foreach (Statement s in bs.statements) {
-                result = Eval(s);
-                if (result != null && result.Type() == obj.Object.RETURN_VALUE_OBJ) {
-                    return result;
+                result = Eval(s, env);
+                if (result != null) {
+                    string rt = result.Type();
+                    if (rt == EvalObject.RETURN_VALUE_OBJ || rt == EvalObject.ERROR_OBJ) {
+                        return result;
+                    }
                 }
             }
             return result;
         }
 
-        public static bool isTruthy(obj.Object obj)
+        public static bool isTruthy(EvalObject obj)
         {
             if (obj == NULL) {
                 return false;
@@ -100,7 +200,7 @@ namespace evaluator
             }
         }
         
-        public static obj.Object evalIntegerInfixExpression(string op, obj.Object left, obj.Object right)
+        public static EvalObject evalIntegerInfixExpression(string op,EvalObject left, EvalObject right)
         {
             int leftVal = ((Integer)left).Value;
             int rightVal = ((Integer)right).Value;
@@ -122,24 +222,26 @@ namespace evaluator
             } else if (op == "!=") {
                 return nativeBoolToBooleanObject(leftVal != rightVal);
             } else {
-                return NULL;
+                return new evalobject.Error($"unknown operator: {left.Type()} {op} {right.Type()}");
             }
         }
 
-        public static obj.Object evalInfixExpression(string op, obj.Object left, obj.Object right)
+        public static EvalObject evalInfixExpression(string op, EvalObject left, EvalObject right)
         {
-            if (left.Type() == obj.Object.INTEGER_OBJ && right.Type() == obj.Object.INTEGER_OBJ) {
+            if (left.Type() == EvalObject.INTEGER_OBJ && right.Type() == EvalObject.INTEGER_OBJ) {
                 return evalIntegerInfixExpression(op, left, right);
             } else if (op == "==") {
                 return nativeBoolToBooleanObject(left == right);
             } else if (op == "!=") {
                 return nativeBoolToBooleanObject(left != right);
+            } else if (left.Type() != right.Type()) {
+                return new evalobject.Error($"type mismatch: {left.Type()} {op} {right.Type()}");
             } else {
-                return NULL;
+                return new evalobject.Error($"unknown operator: {left.Type()} {op} {right.Type()}");
             }
         }
 
-        public static obj.Object evalPrefixExpression(string op, obj.Object right)
+        public static EvalObject evalPrefixExpression(string op, EvalObject right)
         {
             switch (op) {
                 case "!":
@@ -147,11 +249,11 @@ namespace evaluator
                 case "-":
                     return evalMinusPrefixOperatorExpression(right);
                 default:
-                    return NULL;
+                    return new evalobject.Error($"unknown operator: {op}{right.Type()}");
             }
         }
 
-        public static obj.Object evalBangOperatorExpression(obj.Object right)
+        public static EvalObject evalBangOperatorExpression(EvalObject right)
         {
             if (right ==  TRUE) {
                 return FALSE;
@@ -164,30 +266,30 @@ namespace evaluator
             }
         }
 
-        public static obj.Object evalMinusPrefixOperatorExpression(obj.Object right)
+        public static EvalObject evalMinusPrefixOperatorExpression(EvalObject right)
         {
-            if (right.Type() != obj.Object.INTEGER_OBJ) {
-                return NULL;
+            if (right.Type() != EvalObject.INTEGER_OBJ) {
+                return new Error($"unknown operator: -{right.Type()}");
             }
             int value = ((Integer)right).Value;
             return new Integer{ Value = -value };
         }
 
 
-        public static obj.Boolean nativeBoolToBooleanObject(bool input)
+        public static evalobject.Boolean nativeBoolToBooleanObject(bool input)
         {
             return input ? Evaluator.TRUE : Evaluator.FALSE;
         }
 
-        public static obj.Object evalStatements(List<Statement> stmts)
+        public static EvalObject evalStatements(List<Statement> stmts, MEnvironment env)
         {
-            obj.Object result = null;
+            EvalObject result = null;
 
             foreach(Statement stmt in stmts) {
-                result = Eval(stmt);
+                result = Eval(stmt, env);
                 Type t = result.GetType();
-                if (t == typeof(obj.ReturnValue)) {
-                    obj.ReturnValue r = (obj.ReturnValue)result;
+                if (t == typeof(evalobject.ReturnValue)) {
+                    evalobject.ReturnValue r = (evalobject.ReturnValue)result;
                     return r.Value;
                 }
             }

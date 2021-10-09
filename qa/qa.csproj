@@ -19,13 +19,18 @@
     </PackageReference>
   </ItemGroup>
 
-    <ItemGroup>
-    <ProjectReference
-      Include="..\parser\parser.csproj" />
+  <ItemGroup>
     <ProjectReference
       Include="..\lexer\lexer.csproj" />
     <ProjectReference
+      Include="..\token\token.csproj" />
+    <ProjectReference
       Include="..\ast\ast.csproj" />
+    <ProjectReference
+      Include="..\parser\parser.csproj" />
+    <ProjectReference
+      Include="..\evaluator\evaluator.csproj" />
+    <ProjectReference
+      Include="..\evalobject\evalobject.csproj" />
   </ItemGroup>
-
 </Project>

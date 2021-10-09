@@ -178,7 +178,7 @@ namespace parser
 
         public Expression? parseCallExpression(Expression fun)
         {
-            CallExpression exp = new CallExpression() {token = curToken, function = fun, arguments = parseCallArguments()};
+            CallExpression exp = new CallExpression() {t = curToken, function = fun, arguments = parseCallArguments()};
             return exp;    
         }
 

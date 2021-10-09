@@ -5,7 +5,8 @@ using lexer;
 using parser;
 using ast;
 using evaluator;
-using obj;
+using evalobject;
+using menvironment;
 
 #nullable enable
 
@@ -58,6 +59,64 @@ namespace evaluator_test
             }
         }
 
+        private class TestErrorHandlingCase
+        {
+            public string input { get; set; }
+            public string expected { get; set; }
+            public TestErrorHandlingCase(string i, string e)
+            {
+                input = i;
+                expected = e;
+            }
+        }
+
+        private class TestLetStatementsCase
+        {
+            public string input { get; set; }
+            public int expected { get; set; }
+            public TestLetStatementsCase(string i, int e)
+            {
+                input = i;
+                expected = e;
+            }
+        }
+
+        [Fact]
+        public void TestLetStatements()
+        {
+            var tests = new List<TestLetStatementsCase>() {
+                new TestLetStatementsCase("let a = 5; a;", 5),
+                new TestLetStatementsCase("let a = 5 * 5; a;", 25),
+                new TestLetStatementsCase("let a = 5; let b = a; b;", 5),
+                new TestLetStatementsCase("let a = 5; let b = a; let c = a + b + 5; c;", 15)
+            };
+            foreach(TestLetStatementsCase tt in tests) {
+                testIntegerObject(testEval(tt.input), tt.expected);
+            }
+        }
+
+        [Fact]
+        public void TestErrorHandling()
+        {
+            var tests = new List<TestErrorHandlingCase>() {
+                new TestErrorHandlingCase("5 + True;", "type mismatch: INTEGER + BOOLEAN"),
+                new TestErrorHandlingCase("5 + True; 5;", "type mismatch: INTEGER + BOOLEAN"),
+                new TestErrorHandlingCase("-True", "unknown operator: -BOOLEAN"),
+                new TestErrorHandlingCase("True + False;", "unknown operator: BOOLEAN + BOOLEAN"),
+                new TestErrorHandlingCase("5; True + False; 5", "unknown operator: BOOLEAN + BOOLEAN"),
+                new TestErrorHandlingCase("if (10 > 1) { True + False; }", "unknown operator: BOOLEAN + BOOLEAN"),
+                new TestErrorHandlingCase("if (10 > 1) { if (10 > 1) { return True + False; } return 1; }", "unknown operator: BOOLEAN + BOOLEAN"),
+                new TestErrorHandlingCase("foobar", "identifier not found: foobar")
+            };
+
+            foreach (TestErrorHandlingCase tt in tests) {
+                EvalObject evaluated = testEval(tt.input);
+                Assert.IsType<evalobject.Error>(evaluated);
+                evalobject.Error e = (evalobject.Error)evaluated;
+                Assert.Equal(e.Message, tt.expected);
+            }
+        }
+
         [Fact]
         public void TestReturnStatements()
         {
@@ -71,7 +130,7 @@ namespace evaluator_test
             };
 
             foreach (TestReturnStatementsCase tt in tests) {
-                obj.Object evaluated = testEval(tt.input);
+                EvalObject evaluated = testEval(tt.input);
                 testIntegerObject(evaluated, tt.expected);
             }
         }
@@ -91,7 +150,7 @@ namespace evaluator_test
              };
              
             foreach (TestIfElseExpressionsCase tt in tests) {
-                obj.Object evaluated = testEval(tt.input);
+                EvalObject evaluated = testEval(tt.input);
                 if (tt.expected == null) {
                     testNullObject(evaluated);
                 } else {
@@ -103,7 +162,49 @@ namespace evaluator_test
             }
         }
 
-        private void testNullObject(obj.Object obj)
+        [Fact]
+        public void TestFunctionObject()
+        {
+            string input = "fn(x) { x + 2; };";
+            EvalObject evaluated = testEval(input);
+            Assert.IsType<Function>(evaluated);
+            Function f = (Function)evaluated;
+            Assert.Equal(f.Parameters.Count, 1);
+            Assert.Equal(f.Parameters[0].String(), "x");
+            string expectedBody = "(x + 2)";
+            Assert.Equal(f.Body.String(), expectedBody);
+        }
+
+        private class TestFunctionApplicationCase
+        {
+            public string input { get; set; }
+            public int expected { get; set; }
+            public TestFunctionApplicationCase(string i, int e)
+            {
+                input = i;
+                expected = e;
+            }
+        }
+
+        [Fact]
+        public void TestFunctionApplication()
+        {
+            var tests = new List<TestFunctionApplicationCase>() {
+                new TestFunctionApplicationCase("let identity = fn(x) { x; }; identity(5);", 5),
+                new TestFunctionApplicationCase("let identity = fn(x) { return x; }; identity(5);", 5),
+                new TestFunctionApplicationCase("let double = fn(x) { x * 2; }; double(5);", 10),
+                new TestFunctionApplicationCase("let add = fn(x, y) { x + y; }; add(5, 5);", 10),
+                new TestFunctionApplicationCase("let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20),
+                new TestFunctionApplicationCase("fn(x) { x; }(5)", 5),
+            };
+
+            foreach(TestFunctionApplicationCase tt in tests) {
+                testIntegerObject(testEval(tt.input), tt.expected);
+            }
+        }
+
+
+        private void testNullObject(EvalObject obj)
         {
             Assert.Equal(obj, Evaluator.NULL);
         }
@@ -134,7 +235,7 @@ namespace evaluator_test
             };
 
             foreach (TestEvalBooleanExpressionCase tt in tests) {
-                obj.Object evaluated = testEval(tt.input);
+                EvalObject evaluated = testEval(tt.input);
                 testBooleanObject(evaluated, tt.expected);
             }
         }
@@ -163,7 +264,7 @@ namespace evaluator_test
             };
 
             foreach (TestBangOperatorCase tt in tests) {
-                obj.Object evaluated = testEval(tt.input);
+                EvalObject evaluated = testEval(tt.input);
                 testBooleanObject(evaluated, tt.expected);
             }
         }
@@ -190,30 +291,31 @@ namespace evaluator_test
             };
 
             foreach (TestEvalIntegerExpressionCase tt in tests) {
-                obj.Object evaluated = testEval(tt.input);
+                EvalObject evaluated = testEval(tt.input);
                 testIntegerObject(evaluated, tt.expected);
             }
         }
 
-        private obj.Object testEval(string input)
+        private EvalObject testEval(string input)
         {
             Lexer l = new Lexer(input);
             Parser p = new Parser(l);
             Program? program = p.ParseProgram();
-            return Evaluator.Eval(program);
+            MEnvironment env = new MEnvironment();
+            return Evaluator.Eval(program, env);
         }
 
-        private void testIntegerObject(obj.Object obj, int expected)
+        private void testIntegerObject(EvalObject obj, int expected)
         {
             Assert.IsType<Integer>(obj);
             Integer result = (Integer)obj;
             Assert.Equal(result.Value, expected);
         }
 
-        private void testBooleanObject(obj.Object obj, bool expected)
+        private void testBooleanObject(EvalObject obj, bool expected)
         {
-            Assert.IsType<obj.Boolean>(obj);
-            obj.Boolean result = (obj.Boolean)obj;
+            Assert.IsType<evalobject.Boolean>(obj);
+            evalobject.Boolean result = (evalobject.Boolean)obj;
             Assert.Equal(result.Value, expected);
         }
     }

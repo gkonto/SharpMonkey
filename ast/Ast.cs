@@ -47,13 +47,13 @@ namespace ast
 
     public class CallExpression : Expression
     {
-        public Token token;
+        public Token t;
         public Expression function;
         public List<Expression?>? arguments;
 
         public override string TokenLiteral()
         {
-            return token.Literal;
+            return t.Literal;
         }
 
         public override string String()

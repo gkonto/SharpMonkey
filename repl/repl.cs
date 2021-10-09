@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using lexer;
 using parser;
 using ast;
-using obj;
 using evaluator;
+using menvironment;
+using evalobject;
 
 #nullable enable
 
@@ -23,6 +24,8 @@ namespace repl
 
         public static void start()
         {
+            MEnvironment env = new MEnvironment();
+
             while (true) {
                 Write(prompt);
                 string input = ReadLine();
@@ -40,7 +43,7 @@ namespace repl
                         continue;
                     }
                 }
-                obj.Object evaluated = Evaluator.Eval(program);
+                EvalObject evaluated = Evaluator.Eval(program, env);
                 if (evaluated != null) {
                     WriteLine(evaluated.Inspect());
                 }
