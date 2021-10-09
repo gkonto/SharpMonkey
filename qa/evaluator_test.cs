@@ -270,6 +270,18 @@ namespace evaluator_test
         }
 
         [Fact]
+        public void TestClosures()
+        {
+            string input = @"let newAdder = fn(x) {
+                                fn(y) { x + y };
+                            };
+                
+                            let addTwo = newAdder(2);
+                            addTwo(2);";
+            testIntegerObject(testEval(input), 4);
+        }
+
+        [Fact]
         public void TestEvalIntegerExpression()
         {
             var tests = new List<TestEvalIntegerExpressionCase>() {

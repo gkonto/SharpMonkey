@@ -33,9 +33,13 @@ namespace repl
                 if (input.Length == 0) {
                     break;
                 }
+                var watch = System.Diagnostics.Stopwatch.StartNew();
                 Lexer l = new Lexer(input);
+
                 Parser p = new Parser(l);
                 Program? program = p.ParseProgram();
+                watch.Stop();
+                var parseMs = watch.ElapsedMilliseconds;
 
                 if (program != null) {
                     if (p.errors.Count != 0) {
@@ -43,10 +47,15 @@ namespace repl
                         continue;
                     }
                 }
+                watch = System.Diagnostics.Stopwatch.StartNew();
                 EvalObject evaluated = Evaluator.Eval(program, env);
+                watch.Stop();
+                var evalMs = watch.ElapsedMilliseconds;
+
                 if (evaluated != null) {
                     WriteLine(evaluated.Inspect());
                 }
+                WriteLine($"\nTime Elapsed (ms)\n============\nParse: {parseMs}\nEval : {evalMs}\nTotal: {parseMs + evalMs}\n");
             }
         }
     }
