@@ -32,7 +32,8 @@ namespace token
         ELSE,
         RETURN,
         EQ,
-        NOT_EQ
+        NOT_EQ,
+        STRING
     }
 
     public class Token

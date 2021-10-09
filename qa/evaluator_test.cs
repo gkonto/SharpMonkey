@@ -106,7 +106,8 @@ namespace evaluator_test
                 new TestErrorHandlingCase("5; True + False; 5", "unknown operator: BOOLEAN + BOOLEAN"),
                 new TestErrorHandlingCase("if (10 > 1) { True + False; }", "unknown operator: BOOLEAN + BOOLEAN"),
                 new TestErrorHandlingCase("if (10 > 1) { if (10 > 1) { return True + False; } return 1; }", "unknown operator: BOOLEAN + BOOLEAN"),
-                new TestErrorHandlingCase("foobar", "identifier not found: foobar")
+                new TestErrorHandlingCase("foobar", "identifier not found: foobar"),
+                new TestErrorHandlingCase("\"Hello\" - \"World\"", "unknown operator: STRING - STRING"),
             };
 
             foreach (TestErrorHandlingCase tt in tests) {
@@ -267,6 +268,26 @@ namespace evaluator_test
                 EvalObject evaluated = testEval(tt.input);
                 testBooleanObject(evaluated, tt.expected);
             }
+        }
+
+        [Fact]
+        public void TestStringConcatenation()
+        {
+            string input = "\"Hello\" + \" \" + \"World!\"";
+            EvalObject evaluated = testEval(input);
+            Assert.IsType<evalobject.String>(evaluated);
+            evalobject.String str = (evalobject.String)evaluated;
+            Assert.Equal(str.Value, "Hello World!");
+        }
+
+        [Fact]
+        public void TestStringLiteral()
+        {
+            string input = "\"Hello world!\"";
+            EvalObject evaluated = testEval(input);
+            Assert.IsType<evalobject.String>(evaluated);
+            evalobject.String str = (evalobject.String)evaluated;
+            Assert.Equal(str.Value, "Hello world!");
         }
 
         [Fact]

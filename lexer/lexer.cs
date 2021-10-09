@@ -80,6 +80,20 @@ namespace lexer
             }
         }
 
+        private string readString()
+        {
+            Position += 1;
+            var start = Position;
+
+            while (true) {
+                readChar();
+                if (Ch == '"' || Ch == 0) {
+                    break;
+                }
+            }
+            return Input.Substring(start, Position - start);
+        }
+
         public Token NextToken() 
         {
             Token tok = new Token();
@@ -161,6 +175,10 @@ namespace lexer
                 case '\0':
                     tok.Literal = "";
                     tok.Type = EOF;
+                    break;
+                case '"':
+                    tok.Type = STRING;
+                    tok.Literal = readString();
                     break;
                 default:
                     if (isLetter()) {

@@ -82,6 +82,30 @@ namespace lexer_test
         }
 
         [Fact]
+        public void TestNextToken6()
+        {
+            string input = "\"foobar\"";
+            var tests = new List<Token>() {
+                new Token() {Type = STRING, Literal = "foobar"},
+                new Token() {Type = EOF, Literal = ""},
+            };
+
+            TestCore(input, tests);
+        }
+        
+        [Fact]
+        public void TestNextToken7()
+        {
+            string input = "\"foo bar\"";
+            var tests = new List<Token>() {
+                new Token() {Type = STRING, Literal = "foo bar"},
+                new Token() {Type = EOF, Literal = ""},
+            };
+
+            TestCore(input, tests);
+        }
+
+        [Fact]
         public void TestNextToken1()
         {
             string input = @"let five = 5;

@@ -74,6 +74,23 @@ namespace ast
         }
     }
 
+    public class StringLiteral : Expression
+    {
+        public Token token;
+        public string Value;
+
+        public override string TokenLiteral()
+        {
+            return token.Literal;
+        }
+
+        public override string String()
+        {
+            return token.Literal;
+        }
+
+    }
+
     public class FunctionLiteral : Expression
     {
         public Token token;

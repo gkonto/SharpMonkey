@@ -65,6 +65,23 @@ namespace ParserTest
         }
 
         [Fact]
+        public void TestStringLiteralExpression()
+        {
+            string input = "\"hello world\"";
+            Lexer l = new Lexer(input);
+            Parser p = new Parser(l);
+            Program? program = p.ParseProgram();
+            checkParserErrors(p);
+
+            if (program != null) {
+                ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
+                Assert.IsType<StringLiteral>(stmt.expression);
+                StringLiteral literal = (StringLiteral)stmt.expression;
+                Assert.Equal(literal.Value, "hello world");
+            }
+        }
+
+        [Fact]
         public void TestParsingPrefixExpressions()
         {
             var tests = new List<PrefixTest>() {

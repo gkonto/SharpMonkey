@@ -59,6 +59,7 @@ namespace parser
             registerPrefix(LPAREN, parseGroupedExpression);
             registerPrefix(IF, parseIfExpression);
             registerPrefix(FUNCTION, parseFunctionLiteral);
+            registerPrefix(STRING, parseStringLiteral);
            
             registerInfix(PLUS, parseInfixExpression);
             registerInfix(MINUS, parseInfixExpression);
@@ -86,6 +87,11 @@ namespace parser
                 nextToken();
             }
             return block;
+        }
+
+        public Expression? parseStringLiteral()
+        {
+            return new StringLiteral() {token = curToken, Value = curToken.Literal};
         }
 
         public Expression? parseFunctionLiteral()

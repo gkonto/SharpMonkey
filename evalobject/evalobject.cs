@@ -13,6 +13,7 @@ namespace evalobject
         static readonly string RETURN_VALUE_OBJ = "RETURN_VALUE";
         static readonly string ERROR_OBJ = "ERROR_OBJ";
         static readonly string FUNCTION_OBJ = "FUNCTION";
+        static readonly string STRING_OBJ = "STRING";
 
         string Type();
         string Inspect();
@@ -23,6 +24,13 @@ namespace evalobject
         public int Value;
         public string Inspect() { return Value.ToString(); }
         public string Type() { return EvalObject.INTEGER_OBJ; }
+    }
+
+    public class String : EvalObject
+    {
+        public string Value;
+        public string Inspect() { return Value; }
+        public string Type() { return EvalObject.STRING_OBJ; }
     }
 
     public class Function : EvalObject

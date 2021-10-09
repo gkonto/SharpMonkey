@@ -74,6 +74,9 @@ namespace evaluator
                     return args[0];
                 }
                 return applyFunction(function, args);
+            } else if (t == typeof(ast.StringLiteral)) {
+                StringLiteral str = (StringLiteral)node;
+                return new evalobject.String() { Value = str.Value };
             }
 
             return null;
@@ -236,9 +239,21 @@ namespace evaluator
                 return nativeBoolToBooleanObject(left != right);
             } else if (left.Type() != right.Type()) {
                 return new evalobject.Error($"type mismatch: {left.Type()} {op} {right.Type()}");
+            } else if (left.Type() == EvalObject.STRING_OBJ && right.Type() == EvalObject.STRING_OBJ) {
+                return evalStringInfixExpression(op, left, right);
             } else {
                 return new evalobject.Error($"unknown operator: {left.Type()} {op} {right.Type()}");
             }
+        }
+
+        public static EvalObject evalStringInfixExpression(string op, EvalObject left, EvalObject right)
+        {
+            if (op != "+") {
+                return new Error($"unknown operator: {left.Type()} {op} {right.Type()}");
+            }
+            string leftVal = ((evalobject.String)left).Value;
+            string rightVal = ((evalobject.String)right).Value;
+            return new evalobject.String() {Value = leftVal + rightVal};
         }
 
         public static EvalObject evalPrefixExpression(string op, EvalObject right)
