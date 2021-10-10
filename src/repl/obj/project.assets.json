@@ -1,0 +1,199 @@
+{
+  "version": 3,
+  "targets": {
+    "net5.0": {
+      "ast/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "token": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/ast.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ast.dll": {}
+        }
+      },
+      "evalobject/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "ast": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/evalobject.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/evalobject.dll": {}
+        }
+      },
+      "evaluator/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "ast": "1.0.0",
+          "evalobject": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/evaluator.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/evaluator.dll": {}
+        }
+      },
+      "lexer/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "token": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/lexer.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/lexer.dll": {}
+        }
+      },
+      "parser/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "ast": "1.0.0",
+          "lexer": "1.0.0",
+          "token": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/parser.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/parser.dll": {}
+        }
+      },
+      "token/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "compile": {
+          "bin/placeholder/token.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/token.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ast/1.0.0": {
+      "type": "project",
+      "path": "../ast/ast.csproj",
+      "msbuildProject": "../ast/ast.csproj"
+    },
+    "evalobject/1.0.0": {
+      "type": "project",
+      "path": "../evalobject/evalobject.csproj",
+      "msbuildProject": "../evalobject/evalobject.csproj"
+    },
+    "evaluator/1.0.0": {
+      "type": "project",
+      "path": "../evaluator/evaluator.csproj",
+      "msbuildProject": "../evaluator/evaluator.csproj"
+    },
+    "lexer/1.0.0": {
+      "type": "project",
+      "path": "../lexer/lexer.csproj",
+      "msbuildProject": "../lexer/lexer.csproj"
+    },
+    "parser/1.0.0": {
+      "type": "project",
+      "path": "../parser/parser.csproj",
+      "msbuildProject": "../parser/parser.csproj"
+    },
+    "token/1.0.0": {
+      "type": "project",
+      "path": "../token/token.csproj",
+      "msbuildProject": "../token/token.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net5.0": [
+      "ast >= 1.0.0",
+      "evalobject >= 1.0.0",
+      "evaluator >= 1.0.0",
+      "lexer >= 1.0.0",
+      "parser >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\geork\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\geork\\source\\monkey#\\repl\\repl.csproj",
+      "projectName": "repl",
+      "projectPath": "C:\\Users\\geork\\source\\monkey#\\repl\\repl.csproj",
+      "packagesPath": "C:\\Users\\geork\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\geork\\source\\monkey#\\repl\\obj\\",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "C:\\Users\\geork\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net5.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "projectReferences": {
+            "C:\\Users\\geork\\source\\monkey#\\ast\\ast.csproj": {
+              "projectPath": "C:\\Users\\geork\\source\\monkey#\\ast\\ast.csproj"
+            },
+            "C:\\Users\\geork\\source\\monkey#\\evalobject\\evalobject.csproj": {
+              "projectPath": "C:\\Users\\geork\\source\\monkey#\\evalobject\\evalobject.csproj"
+            },
+            "C:\\Users\\geork\\source\\monkey#\\evaluator\\evaluator.csproj": {
+              "projectPath": "C:\\Users\\geork\\source\\monkey#\\evaluator\\evaluator.csproj"
+            },
+            "C:\\Users\\geork\\source\\monkey#\\lexer\\lexer.csproj": {
+              "projectPath": "C:\\Users\\geork\\source\\monkey#\\lexer\\lexer.csproj"
+            },
+            "C:\\Users\\geork\\source\\monkey#\\parser\\parser.csproj": {
+              "projectPath": "C:\\Users\\geork\\source\\monkey#\\parser\\parser.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net5.0": {
+        "targetAlias": "net5.0",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.302\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

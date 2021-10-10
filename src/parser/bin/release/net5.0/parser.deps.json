@@ -1,0 +1,64 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "parser/1.0.0": {
+        "dependencies": {
+          "ast": "1.0.0",
+          "lexer": "1.0.0",
+          "token": "1.0.0"
+        },
+        "runtime": {
+          "parser.dll": {}
+        }
+      },
+      "ast/1.0.0": {
+        "dependencies": {
+          "token": "1.0.0"
+        },
+        "runtime": {
+          "ast.dll": {}
+        }
+      },
+      "lexer/1.0.0": {
+        "dependencies": {
+          "token": "1.0.0"
+        },
+        "runtime": {
+          "lexer.dll": {}
+        }
+      },
+      "token/1.0.0": {
+        "runtime": {
+          "token.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "parser/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ast/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "lexer/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "token/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

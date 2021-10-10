@@ -21,16 +21,16 @@
 
   <ItemGroup>
     <ProjectReference
-      Include="..\lexer\lexer.csproj" />
+      Include="..\src\lexer\lexer.csproj" />
     <ProjectReference
-      Include="..\token\token.csproj" />
+      Include="..\src\token\token.csproj" />
     <ProjectReference
-      Include="..\ast\ast.csproj" />
+      Include="..\src\ast\ast.csproj" />
     <ProjectReference
-      Include="..\parser\parser.csproj" />
+      Include="..\src\parser\parser.csproj" />
     <ProjectReference
-      Include="..\evaluator\evaluator.csproj" />
+      Include="..\src\evaluator\evaluator.csproj" />
     <ProjectReference
-      Include="..\evalobject\evalobject.csproj" />
+      Include="..\src\evalobject\evalobject.csproj" />
   </ItemGroup>
 </Project>

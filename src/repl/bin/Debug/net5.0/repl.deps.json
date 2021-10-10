@@ -1,0 +1,108 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "repl/1.0.0": {
+        "dependencies": {
+          "ast": "1.0.0",
+          "evalobject": "1.0.0",
+          "evaluator": "1.0.0",
+          "lexer": "1.0.0",
+          "parser": "1.0.0"
+        },
+        "runtime": {
+          "repl.dll": {}
+        }
+      },
+      "ast/1.0.0": {
+        "dependencies": {
+          "token": "1.0.0"
+        },
+        "runtime": {
+          "ast.dll": {}
+        }
+      },
+      "evalobject/1.0.0": {
+        "dependencies": {
+          "ast": "1.0.0"
+        },
+        "runtime": {
+          "evalobject.dll": {}
+        }
+      },
+      "evaluator/1.0.0": {
+        "dependencies": {
+          "ast": "1.0.0",
+          "evalobject": "1.0.0"
+        },
+        "runtime": {
+          "evaluator.dll": {}
+        }
+      },
+      "lexer/1.0.0": {
+        "dependencies": {
+          "token": "1.0.0"
+        },
+        "runtime": {
+          "lexer.dll": {}
+        }
+      },
+      "parser/1.0.0": {
+        "dependencies": {
+          "ast": "1.0.0",
+          "lexer": "1.0.0",
+          "token": "1.0.0"
+        },
+        "runtime": {
+          "parser.dll": {}
+        }
+      },
+      "token/1.0.0": {
+        "runtime": {
+          "token.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "repl/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ast/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "evalobject/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "evaluator/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "lexer/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "parser/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "token/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
