@@ -280,6 +280,7 @@ namespace evaluator_test
             Assert.Equal(str.Value, "Hello World!");
         }
 
+
         [Fact]
         public void TestStringLiteral()
         {
@@ -300,6 +301,44 @@ namespace evaluator_test
                             let addTwo = newAdder(2);
                             addTwo(2);";
             testIntegerObject(testEval(input), 4);
+        }
+
+        
+        private class TestBuiltinFunctionsCase
+        {
+            public string input { get; set; }
+            public object expected { get; set; }
+            public TestBuiltinFunctionsCase(string i, object e)
+            {
+                input = i;
+                expected = e;
+            }
+        }
+
+        [Fact]
+        public void TestBuiltinFunctions()
+        {
+            var tests = new List<TestBuiltinFunctionsCase>() {
+                new TestBuiltinFunctionsCase("len(\"\")", 0),
+                new TestBuiltinFunctionsCase("len(\"four\")", 4),
+                new TestBuiltinFunctionsCase("len(\"hello world\")", 11),
+                new TestBuiltinFunctionsCase("len(1)", "ERROR: argument to 'len' not supported, got INTEGER"),
+                new TestBuiltinFunctionsCase("len(\"one\", \"two\")", "ERROR: wrong number of arguments. got=2, want=1"),
+            };
+
+            foreach (TestBuiltinFunctionsCase tt in tests) {
+                EvalObject evaluated = testEval(tt.input);
+                Type t = tt.expected.GetType();
+
+                if (t == typeof(int)) {
+                    testIntegerObject(evaluated, (int)tt.expected);
+                } else if (t == typeof(string)) {
+                    Assert.IsType<Error>(evaluated);
+                    Error errObj = (Error)evaluated;
+                    Assert.Equal(errObj.Inspect(), tt.expected);
+                }
+            }
+           
         }
 
         [Fact]

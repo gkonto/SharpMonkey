@@ -11,6 +11,27 @@ namespace evaluator
 {
     public class Evaluator
     {
+        public static Dictionary<string, Builtin> Builtins = new Dictionary<string, Builtin>() {
+            {"len", new Builtin() {Fn = len} }
+        };
+
+        public static EvalObject len(List<EvalObject> args) 
+        {
+            if (args.Count != 1) {
+                return new Error($"wrong number of arguments. got={args.Count}, want=1");
+            }
+            
+            Type t = args[0].GetType();
+            if (t == typeof(evalobject.String)) {
+                evalobject.String arg = (evalobject.String)args[0];
+                return new Integer() { Value = arg.Value.Length };
+            } else {
+                return new Error($"argument to 'len' not supported, got {args[0].Type()}");
+            }
+
+            return NULL; 
+        }
+
         public static readonly evalobject.Boolean TRUE = new evalobject.Boolean { Value = true };
         public readonly static evalobject.Boolean FALSE = new evalobject.Boolean { Value = false };
         public readonly static evalobject.Null  NULL = new evalobject.Null();
@@ -84,13 +105,19 @@ namespace evaluator
 
         private static EvalObject applyFunction(EvalObject fn, List<EvalObject> args)
         {
-            if (fn.GetType() != typeof(Function)) {
+            Type t = fn.GetType();
+            if (t == typeof(Function)) {
+                Function function = (Function)fn;   
+                MEnvironment extendedEnv = extendFunctionEnv(function, args);
+                EvalObject evaluated = Eval(function.Body, extendedEnv);
+                return unwrapReturnValue(evaluated);
+            } else if (t == typeof(Builtin)) {
+                Builtin b = (Builtin)fn;
+                return b.Fn(args);
+            } else {
                 return new Error($"not a function: {fn.Type()}");
             }
-            Function function = (Function)fn;   
-            MEnvironment extendedEnv = extendFunctionEnv(function, args);
-            EvalObject evaluated = Eval(function.Body, extendedEnv);
-            return unwrapReturnValue(evaluated);
+
         }
 
         private static MEnvironment extendFunctionEnv(Function fn, List<EvalObject> args)
@@ -131,10 +158,18 @@ namespace evaluator
         private static EvalObject evalIdentifier(ast.Identifier ident, MEnvironment env)
         {
             EvalObject? o = env.Get(ident.value);
-            if (o == null) {
-                return new Error($"identifier not found: {ident.value}");
+            if (o != null) {
+                return o;
             }
-            return o;
+
+            Builtin b;
+            Builtins.TryGetValue(ident.value, out b);
+            if (b != null) {
+                return b;
+            }
+
+
+            return new Error($"identifier not found: {ident.value}");
         }
 
         private static bool isError(EvalObject? o)

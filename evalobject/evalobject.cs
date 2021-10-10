@@ -14,6 +14,7 @@ namespace evalobject
         static readonly string ERROR_OBJ = "ERROR_OBJ";
         static readonly string FUNCTION_OBJ = "FUNCTION";
         static readonly string STRING_OBJ = "STRING";
+        static readonly string BUILTIN_OBJ = "BUILTIN";
 
         string Type();
         string Inspect();
@@ -24,6 +25,15 @@ namespace evalobject
         public int Value;
         public string Inspect() { return Value.ToString(); }
         public string Type() { return EvalObject.INTEGER_OBJ; }
+    }
+
+    public class Builtin : EvalObject
+    {
+        public delegate EvalObject BuiltinFunction(List<EvalObject> args);
+        public BuiltinFunction Fn;
+        public string Inspect() { return "builtin function"; }
+        public string Type() { return EvalObject.BUILTIN_OBJ; }
+
     }
 
     public class String : EvalObject
@@ -84,8 +94,8 @@ namespace evalobject
     public class Error : EvalObject
     {
         public string Message;
-        public string Inspect() { return EvalObject.ERROR_OBJ; }
-        public string Type() { return "ERROR: " + Message; }
+        public string Type() { return EvalObject.ERROR_OBJ; }
+        public string Inspect() { return "ERROR: " + Message; }
 
         public Error(string msg)
         {

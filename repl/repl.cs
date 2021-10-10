@@ -52,10 +52,10 @@ namespace repl
                 watch.Stop();
                 var evalMs = watch.ElapsedMilliseconds;
 
-                if (evaluated != null) {
+                if (evaluated != null) { 
                     WriteLine(evaluated.Inspect());
                 }
-                WriteLine($"\nTime Elapsed (ms)\n============\nParse: {parseMs}\nEval : {evalMs}\nTotal: {parseMs + evalMs}\n");
+                WriteLine($"\nTime Elapsed (ms)\n============\nParse: {parseMs}ms Eval: {evalMs}ms Total: {parseMs + evalMs}ms\n");
             }
         }
     }
