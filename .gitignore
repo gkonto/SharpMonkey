@@ -66,8 +66,9 @@ fastlane/test_output
 iOSInjectionProject/
 
 
-*/obj/*
-*/bin/*
 
 *workspace
-obj/*
+qa/bin/
+qa/obj/
+src/*/obj/
+src/*/bin/*/
