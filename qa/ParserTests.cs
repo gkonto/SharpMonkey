@@ -75,7 +75,7 @@ namespace ParserTest
                 ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
                 Assert.IsType<StringLiteral>(stmt.expression);
                 StringLiteral literal = (StringLiteral)stmt.expression;
-                Assert.Equal(literal.Value, "hello world");
+                Assert.Equal("hello world", literal.Value);
             }
         }
 
@@ -96,7 +96,7 @@ namespace ParserTest
                 checkParserErrors(p);
                 Assert.NotNull(program);
                 if (program != null) {
-                    Assert.Equal(program.statements.Count, 1);
+                    Assert.Single(program.statements);
                     Assert.IsType<ExpressionStatement>(program.statements[0]);
                     ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
                     Assert.IsType<PrefixExpression>(stmt.expression);
@@ -118,13 +118,13 @@ namespace ParserTest
 
             Assert.NotNull(program);
             if (program != null) {
-                Assert.Equal(program.statements.Count, 1);
+                Assert.Single(program.statements);
                 Assert.IsType<ExpressionStatement>(program.statements[0]);
                 ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
                 Assert.IsType<IntegerLiteral>(stmt.expression);
                 IntegerLiteral literal = (IntegerLiteral)stmt.expression;
-                Assert.Equal(literal.value, 5);
-                Assert.Equal(literal.TokenLiteral(), "5");
+                Assert.Equal(5, literal.value);
+                Assert.Equal("5", literal.TokenLiteral());
             }
         }
 
@@ -157,7 +157,7 @@ namespace ParserTest
             public string expected;
         }
 
-        public void testIdentifier(Expression exp, string value)
+        private void testIdentifier(Expression exp, string value)
         {
             Assert.IsType<Identifier>(exp);
             Identifier ident = (Identifier)exp;
@@ -173,7 +173,7 @@ namespace ParserTest
             Assert.Equal(bo.TokenLiteral(), value.ToString());
         }
 
-        public void testLiteralExpression(Expression exp, object expected)
+        private void testLiteralExpression(Expression exp, object expected)
         {
             Type t = expected.GetType();
             if (t.Equals(typeof(int))) {
@@ -187,7 +187,7 @@ namespace ParserTest
         }
 
 
-        public void testInfixExpression(Expression exp, object left,
+        private void testInfixExpression(Expression exp, object left,
                                         string op, object right)
         {
             Assert.IsType<InfixExpression>(exp);
@@ -264,13 +264,13 @@ namespace ParserTest
             checkParserErrors(p);
             Assert.NotNull(program);
             if (program != null) {
-                Assert.Equal(program.statements.Count, 1);
+                Assert.Single(program.statements);
                 Assert.IsType<ExpressionStatement>(program.statements[0]);
                 ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
                 Assert.IsType<CallExpression>(stmt.expression);
                 CallExpression exp = (CallExpression)stmt.expression;
                 testIdentifier(exp.function, "add");
-                Assert.Equal(exp.arguments.Count, 3);
+                Assert.Equal(3, exp.arguments.Count);
                 testLiteralExpression(exp.arguments[0], 1);
                 testInfixExpression(exp.arguments[1], 2, "*", 3);
                 testInfixExpression(exp.arguments[2], 4, "+", 5);
@@ -289,7 +289,7 @@ namespace ParserTest
             Assert.NotNull(program);
             if (program != null)
             {
-                Assert.Equal(program.statements.Count, 1);
+                Assert.Single(program.statements);
                 Assert.IsType<ExpressionStatement>(program.statements[0]);
                 ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
                 Assert.IsType<FunctionLiteral>(stmt.expression);
@@ -298,11 +298,11 @@ namespace ParserTest
                 Assert.NotNull(function.parameters);
                 if (function.parameters != null)
                 {
-                    Assert.Equal(function.parameters.Count, 2);
+                    Assert.Equal(2, function.parameters.Count);
                     testLiteralExpression(function.parameters[0], "x");
                     testLiteralExpression(function.parameters[1], "y");
                 }
-                Assert.Equal(function.body.statements.Count, 1);
+                Assert.Single(function.body.statements);
                 Assert.IsType<ExpressionStatement>(function.body.statements[0]);
                 ExpressionStatement bodyStmt = (ExpressionStatement)function.body.statements[0];
                 testInfixExpression(bodyStmt.expression, "x", "+", "y");
@@ -351,13 +351,13 @@ namespace ParserTest
             checkParserErrors(p);
             Assert.NotNull(program);
             if (program != null) {
-                Assert.Equal(program.statements.Count, 1);
+                Assert.Single(program.statements);
                 Assert.IsType<ExpressionStatement>(program.statements[0]);
                 ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
                 Assert.IsType<IfExpression>(stmt.expression);
                 IfExpression exp = (IfExpression)stmt.expression;
                 testInfixExpression(exp.condition, "x", "<", "y");
-                Assert.Equal(exp.consequence.statements.Count, 1);
+                Assert.Single(exp.consequence.statements);
                 Assert.IsType<ExpressionStatement>(exp.consequence.statements[0]);
                 ExpressionStatement consequence = (ExpressionStatement)exp.consequence.statements[0];
                 testIdentifier(consequence.expression, "x");
@@ -389,7 +389,7 @@ namespace ParserTest
                 checkParserErrors(p);
                 Assert.NotNull(program);
                 if (program != null) {
-                    Assert.Equal(program.statements.Count, 1);
+                    Assert.Single(program.statements);
                     Assert.IsType<ExpressionStatement>(program.statements[0]);
                     ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
                     Assert.IsType<InfixExpression>(stmt.expression);
@@ -414,13 +414,13 @@ namespace ParserTest
             checkParserErrors(p);
             Assert.NotNull(program);
             if (program != null) {
-                Assert.Equal(program.statements.Count, 1);
+                Assert.Single(program.statements);
                 Assert.IsType<ExpressionStatement>(program.statements[0]);
                 ExpressionStatement stmt = (ExpressionStatement)program.statements[0];
                 Assert.IsType<Identifier>(stmt.expression);
                 Identifier ident = (Identifier)stmt.expression;
-                Assert.Equal(ident.value, "foobar");
-                Assert.Equal(ident.TokenLiteral(), "foobar");
+                Assert.Equal("foobar", ident.value);
+                Assert.Equal("foobar", ident.TokenLiteral());
             }
         }
 
@@ -443,7 +443,7 @@ namespace ParserTest
                 foreach (Statement stmt in program.statements) {
                     Assert.IsType<ReturnStatement>(stmt);
                     ReturnStatement returnStmt = (ReturnStatement)stmt;
-                    Assert.Equal(returnStmt.TokenLiteral(), "return");
+                    Assert.Equal("return", returnStmt.TokenLiteral());
                 }
             }
         }
@@ -479,7 +479,7 @@ namespace ParserTest
                 Assert.NotNull(program);
             
                 if (program != null) {
-                    Assert.Equal(1, program.statements.Count);
+                    Assert.Single(program.statements);
                     Statement stmt = program.statements[0];
                     testLetStatement(stmt, tt.expectedIdentifier);
                     Assert.IsType<LetStatement>(stmt);

@@ -20,7 +20,7 @@ namespace ast_test
                                 value = new Identifier() { token = new Token() {Type = IDENT, Literal = "anotherVar"},
                                                             value = "anotherVar"}
                             });
-            Assert.Equal(program.String(), "let myVar = anotherVar;");
+            Assert.Equal("let myVar = anotherVar;", program.String());
         }
     }
 }

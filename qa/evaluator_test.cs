@@ -170,8 +170,8 @@ namespace evaluator_test
             EvalObject evaluated = testEval(input);
             Assert.IsType<Function>(evaluated);
             Function f = (Function)evaluated;
-            Assert.Equal(f.Parameters.Count, 1);
-            Assert.Equal(f.Parameters[0].String(), "x");
+            Assert.Single(f.Parameters);
+            Assert.Equal("x", f.Parameters[0].String());
             string expectedBody = "(x + 2)";
             Assert.Equal(f.Body.String(), expectedBody);
         }
@@ -277,7 +277,7 @@ namespace evaluator_test
             EvalObject evaluated = testEval(input);
             Assert.IsType<evalobject.String>(evaluated);
             evalobject.String str = (evalobject.String)evaluated;
-            Assert.Equal(str.Value, "Hello World!");
+            Assert.Equal("Hello World!", str.Value);
         }
 
 
@@ -288,7 +288,7 @@ namespace evaluator_test
             EvalObject evaluated = testEval(input);
             Assert.IsType<evalobject.String>(evaluated);
             evalobject.String str = (evalobject.String)evaluated;
-            Assert.Equal(str.Value, "Hello world!");
+            Assert.Equal( "Hello world!", str.Value);
         }
 
         [Fact]
