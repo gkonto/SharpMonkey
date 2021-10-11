@@ -8,8 +8,6 @@ using evaluator;
 using evalobject;
 using menvironment;
 
-#nullable enable
-
 namespace evaluator_test
 {
     public class EvaluatorTest
@@ -40,8 +38,8 @@ namespace evaluator_test
         private class TestIfElseExpressionsCase
         {
             public string input { get; set; }
-            public object? expected { get; set; }
-            public TestIfElseExpressionsCase(string i, object? e)
+            public object expected { get; set; }
+            public TestIfElseExpressionsCase(string i, object e)
             {
                 input = i;
                 expected = e;
@@ -372,7 +370,7 @@ namespace evaluator_test
         {
             Lexer l = new Lexer(input);
             Parser p = new Parser(l);
-            Program? program = p.ParseProgram();
+            Program program = p.ParseProgram();
             MEnvironment env = new MEnvironment();
             return Evaluator.Eval(program, env);
         }

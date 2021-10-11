@@ -1,0 +1,13 @@
+C:\Users\geork\source\SharpMonkey\src\bin\Debug\netcoreapp3.1\sharpmonkey.exe
+C:\Users\geork\source\SharpMonkey\src\bin\Debug\netcoreapp3.1\sharpmonkey.deps.json
+C:\Users\geork\source\SharpMonkey\src\bin\Debug\netcoreapp3.1\sharpmonkey.runtimeconfig.json
+C:\Users\geork\source\SharpMonkey\src\bin\Debug\netcoreapp3.1\sharpmonkey.runtimeconfig.dev.json
+C:\Users\geork\source\SharpMonkey\src\bin\Debug\netcoreapp3.1\sharpmonkey.dll
+C:\Users\geork\source\SharpMonkey\src\bin\Debug\netcoreapp3.1\sharpmonkey.pdb
+C:\Users\geork\source\SharpMonkey\src\obj\Debug\netcoreapp3.1\sharpmonkey.csproj.AssemblyReference.cache
+C:\Users\geork\source\SharpMonkey\src\obj\Debug\netcoreapp3.1\sharpmonkey.AssemblyInfoInputs.cache
+C:\Users\geork\source\SharpMonkey\src\obj\Debug\netcoreapp3.1\sharpmonkey.AssemblyInfo.cs
+C:\Users\geork\source\SharpMonkey\src\obj\Debug\netcoreapp3.1\sharpmonkey.csproj.CoreCompileInputs.cache
+C:\Users\geork\source\SharpMonkey\src\obj\Debug\netcoreapp3.1\sharpmonkey.dll
+C:\Users\geork\source\SharpMonkey\src\obj\Debug\netcoreapp3.1\sharpmonkey.pdb
+C:\Users\geork\source\SharpMonkey\src\obj\Debug\netcoreapp3.1\sharpmonkey.genruntimeconfig.cache

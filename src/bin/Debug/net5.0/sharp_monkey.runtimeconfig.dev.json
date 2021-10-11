@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\geork\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\geork\\.nuget\\packages"
+    ]
+  }
+}

@@ -6,8 +6,6 @@ using ast;
 using System.Collections.Generic;
 using Xunit.Abstractions;
 
-#nullable enable
-
 namespace ParserTest
 {
     public class ParserTests
@@ -70,7 +68,7 @@ namespace ParserTest
             string input = "\"hello world\"";
             Lexer l = new Lexer(input);
             Parser p = new Parser(l);
-            Program? program = p.ParseProgram();
+            Program program = p.ParseProgram();
             checkParserErrors(p);
 
             if (program != null) {
@@ -94,7 +92,7 @@ namespace ParserTest
             foreach (PrefixTest tt in tests) {
                 Lexer l = new Lexer(tt.input);
                 Parser p = new Parser(l);
-                Program? program = p.ParseProgram();
+                Program program = p.ParseProgram();
                 checkParserErrors(p);
                 Assert.NotNull(program);
                 if (program != null) {
@@ -115,7 +113,7 @@ namespace ParserTest
             string input = "5;";
             Lexer l = new Lexer(input);
             Parser p = new Parser(l);
-            Program? program = p.ParseProgram();
+            Program program = p.ParseProgram();
             checkParserErrors(p);
 
             Assert.NotNull(program);
@@ -234,7 +232,7 @@ namespace ParserTest
             foreach (var tt in tests) {
                 Lexer l = new Lexer(tt.input);
                 Parser p = new Parser(l);
-                Program? program = p.ParseProgram();
+                Program program = p.ParseProgram();
                 checkParserErrors(p);
                 Assert.NotNull(program);
                 if (program != null) {
@@ -243,13 +241,6 @@ namespace ParserTest
                 }
             }
 
-        }
-
-        [Fact]
-        public void TestIfElseExpression()
-        {
-            //TODO
-            string input = "if (x < y> { x } else { y }";
         }
 
         class FunctionLiteralParsingCase
@@ -269,7 +260,7 @@ namespace ParserTest
             string input = "add(1, 2 * 3, 4 + 5);";
             Lexer l = new Lexer(input);
             Parser p = new Parser(l);
-            Program? program = p.ParseProgram();
+            Program program = p.ParseProgram();
             checkParserErrors(p);
             Assert.NotNull(program);
             if (program != null) {
@@ -293,7 +284,7 @@ namespace ParserTest
 
             Lexer l = new Lexer(input);
             Parser p = new Parser(l);
-            Program? program = p.ParseProgram();
+            Program program = p.ParseProgram();
             checkParserErrors(p);
             Assert.NotNull(program);
             if (program != null)
@@ -330,7 +321,7 @@ namespace ParserTest
             foreach (var tt in tests) {
                 Lexer l = new Lexer(tt.input);
                 Parser p = new Parser(l);
-                Program? program = p.ParseProgram();
+                Program program = p.ParseProgram();
                 checkParserErrors(p);
                 Assert.NotNull(program);
                 if (program != null) {
@@ -356,7 +347,7 @@ namespace ParserTest
             string input = "if (x < y) { x }";
             Lexer l = new Lexer(input);
             Parser p = new Parser(l);
-            Program? program = p.ParseProgram();
+            Program program = p.ParseProgram();
             checkParserErrors(p);
             Assert.NotNull(program);
             if (program != null) {
@@ -394,7 +385,7 @@ namespace ParserTest
             foreach (InfixTest tt in tests) {
                 Lexer l = new Lexer(tt.input);
                 Parser p = new Parser(l);
-                Program? program = p.ParseProgram();
+                Program program = p.ParseProgram();
                 checkParserErrors(p);
                 Assert.NotNull(program);
                 if (program != null) {
@@ -419,7 +410,7 @@ namespace ParserTest
             string input = "foobar;";
             Lexer l = new Lexer(input);
             Parser p = new Parser(l);
-            Program? program = p.ParseProgram();
+            Program program = p.ParseProgram();
             checkParserErrors(p);
             Assert.NotNull(program);
             if (program != null) {
@@ -441,7 +432,7 @@ namespace ParserTest
                             return 993322;";
             Lexer l = new Lexer(input);
             Parser p = new Parser(l);
-            Program? program = p.ParseProgram();
+            Program program = p.ParseProgram();
             checkParserErrors(p);
     
             if (program != null) {
@@ -483,7 +474,7 @@ namespace ParserTest
                 Lexer l = new Lexer(tt.input);
                 Parser p = new Parser(l);
                 
-                Program? program = p.ParseProgram();
+                Program program = p.ParseProgram();
                 checkParserErrors(p);
                 Assert.NotNull(program);
             
