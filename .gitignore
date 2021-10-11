@@ -72,3 +72,5 @@ qa/bin/
 qa/obj/
 src/*/obj/
 src/*/bin/*/
+src/obj
+src/bin

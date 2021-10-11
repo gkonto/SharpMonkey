@@ -5,7 +5,6 @@ namespace menvironment
 {
     public class MEnvironment
     {
-        int x;
         Dictionary<string, EvalObject> store = new Dictionary<string, EvalObject>();
         MEnvironment outer;
         
