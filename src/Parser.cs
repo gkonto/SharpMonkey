@@ -3,6 +3,7 @@ using lexer;
 using token;
 using ast;
 using static token.TokenType;
+using static parser.Precedence;
 using System.Collections.Generic;
 
 namespace parser
@@ -33,15 +34,15 @@ namespace parser
         IDictionary<TokenType, Precedence> precedences = 
             new Dictionary<TokenType, Precedence>()
             {
-                { EQ, Precedence.EQUALS },
-                { NOT_EQ, Precedence.EQUALS },
-                { LT, Precedence.LESSGREATER },
-                { GT, Precedence.LESSGREATER },
-                { PLUS, Precedence.SUM },
-                { MINUS, Precedence.SUM },
-                { SLASH, Precedence.PRODUCT },
-                { ASTERISK, Precedence.PRODUCT },
-                { LPAREN, Precedence.CALL}
+                { EQ, EQUALS },
+                { NOT_EQ, EQUALS },
+                { LT, LESSGREATER },
+                { GT, LESSGREATER },
+                { PLUS, SUM },
+                { MINUS, SUM },
+                { SLASH, PRODUCT },
+                { ASTERISK, PRODUCT },
+                { LPAREN, CALL}
             };
 
         public Parser(Lexer l)
@@ -145,7 +146,7 @@ namespace parser
             }
 
             nextToken();
-            expression.condition = parseExpression(Precedence.LOWEST);
+            expression.condition = parseExpression(LOWEST);
 
             if (!expectPeek(RPAREN)) {
                 return null;
@@ -172,7 +173,7 @@ namespace parser
         public Expression parseGroupedExpression()
         {
             nextToken();
-            Expression exp = parseExpression(Precedence.LOWEST);
+            Expression exp = parseExpression(LOWEST);
             if (!expectPeek(RPAREN)) {
                 return null;
             }
@@ -183,7 +184,7 @@ namespace parser
 
         public Expression parseBoolean()
         {
-            return new ast.Boolean() {token = curToken, value = curTokenIs(TRUE)};
+            return new ast.AstBool() {token = curToken, value = curTokenIs(TRUE)};
         }
 
 
@@ -205,11 +206,11 @@ namespace parser
 
             nextToken();
 
-            args.Add(parseExpression(Precedence.LOWEST));
+            args.Add(parseExpression(LOWEST));
             while (peekTokenIs(COMMA)) {
                 nextToken();
                 nextToken();
-                args.Add(parseExpression(Precedence.LOWEST));
+                args.Add(parseExpression(LOWEST));
             }
 
             if (!expectPeek(RPAREN)) {
@@ -240,7 +241,7 @@ namespace parser
         {
             PrefixExpression expression = new PrefixExpression() {token = curToken, Operator = curToken.Literal};
             nextToken();
-            expression.right = parseExpression(Precedence.PREFIX);
+            expression.right = parseExpression(PREFIX);
             return expression;
         }
 
@@ -266,7 +267,7 @@ namespace parser
 
         public Precedence peekPrecedence()
         {
-            Precedence p = Precedence.LOWEST;
+            Precedence p = LOWEST;
             precedences.TryGetValue(peekToken.Type, out p);
             return p;
         }
@@ -274,7 +275,7 @@ namespace parser
 
         public Precedence curPrecedence()  
         {
-            Precedence p = Precedence.LOWEST;
+            Precedence p = LOWEST;
             precedences.TryGetValue(curToken.Type, out p);
             return p;
         }
@@ -377,7 +378,7 @@ namespace parser
         public ExpressionStatement parseExpressionStatement()
         {
             ExpressionStatement stmt = new ExpressionStatement() {token = curToken};    
-            stmt.expression = parseExpression(Precedence.LOWEST);
+            stmt.expression = parseExpression(LOWEST);
             
             if (peekTokenIs(SEMICOLON)) {
                 nextToken();
@@ -401,7 +402,7 @@ namespace parser
             }
 
             nextToken();
-            stmt.value = parseExpression(Precedence.LOWEST);
+            stmt.value = parseExpression(LOWEST);
 
             if (peekTokenIs(SEMICOLON)) {
                 nextToken();

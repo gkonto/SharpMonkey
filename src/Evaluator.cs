@@ -1,8 +1,9 @@
-﻿using System;
-using ast;
+﻿using ast;
 using System.Collections.Generic;
 using menvironment;
 using evalobject;
+using static evalobject.EvalObject;
+using static evaluator.Evaluator;
 
 namespace evaluator
 {
@@ -18,18 +19,18 @@ namespace evaluator
                 return new Error($"wrong number of arguments. got={args.Count}, want=1");
             }
             
-            if (args[0] is evalobject.String str_arg) {
+            if (args[0] is StrObj str_arg) {
                 return new Integer() { Value = str_arg.Value.Length };
             } else {
                 return new Error($"argument to 'len' not supported, got {args[0].Type()}");
             }
         }
 
-        public static readonly evalobject.Boolean TRUE = new evalobject.Boolean { Value = true };
-        public readonly static evalobject.Boolean FALSE = new evalobject.Boolean { Value = false };
-        public readonly static evalobject.Null  NULL = new evalobject.Null();
+        public static readonly BoolObj TRUE = new BoolObj { Value = true };
+        public readonly static BoolObj FALSE = new BoolObj { Value = false };
+        public readonly static Null  NULL = new Null();
 
-        public static evalobject.EvalObject Eval(Node node, MEnvironment env)
+        public static EvalObject Eval(Node node, MEnvironment env)
         {
             if (node is IntegerLiteral i) {
                 return new Integer { Value = i.value };
@@ -37,35 +38,35 @@ namespace evaluator
                 return evalProgram(p, env);
             } else if (node is ExpressionStatement stmt) {
                 return Eval(stmt.expression, env);
-            } else if (node is ast.Boolean b) {
+            } else if (node is AstBool b) {
                 return nativeBoolToBooleanObject(b.value);
             } else if (node is PrefixExpression prefexp) {
                 EvalObject right = Eval(prefexp.right, env);
                 return evalPrefixExpression(prefexp.Operator, right);
-            } else if (node is ast.InfixExpression ie) {
+            } else if (node is InfixExpression ie) {
                 EvalObject left = Eval(ie.left, env);
                 EvalObject right = Eval(ie.right, env);
                 return evalInfixExpression(ie.Operator, left, right);
-            } else if (node is ast.BlockStatement bs) {
+            } else if (node is BlockStatement bs) {
                 return evalBlockStatement(bs, env);
-            } else if (node is ast.IfExpression ifexp) {
+            } else if (node is IfExpression ifexp) {
                 return evalIfExpression(ifexp, env);
-            } else if (node is ast.ReturnStatement rs) {
+            } else if (node is ReturnStatement rs) {
                 EvalObject val = Eval(rs.returnValue, env);
-                return new evalobject.ReturnValue{Value = val};
-            } else if (node is ast.LetStatement ls) {
+                return new ReturnValue{Value = val};
+            } else if (node is LetStatement ls) {
                 EvalObject val = Eval(ls.value, env);
                 if (isError(val)) {
                     return val;
                 }
                 env.Set(ls.name.value, val);
-            } else if (node is ast.Identifier ident) {
+            } else if (node is Identifier ident) {
                 return evalIdentifier(ident, env);  
-            } else if (node is ast.FunctionLiteral funlit) {
+            } else if (node is FunctionLiteral funlit) {
                 List<Identifier> par = funlit.parameters;
                 BlockStatement block = funlit.body;
                 return new Function() { Parameters = par, Env = env, Body = block};
-            } else if (node is ast.CallExpression ce) {
+            } else if (node is CallExpression ce) {
                 EvalObject function = Eval(ce.function, env);
                 if (isError(function)) {
                     return function;
@@ -76,8 +77,8 @@ namespace evaluator
                     return args[0];
                 }
                 return applyFunction(function, args);
-            } else if (node is ast.StringLiteral str) {
-                return new evalobject.String() { Value = str.Value };
+            } else if (node is StringLiteral str) {
+                return new StrObj() { Value = str.Value };
             }
 
             return null;
@@ -129,7 +130,7 @@ namespace evaluator
             return result;
         }
 
-        private static EvalObject evalIdentifier(ast.Identifier ident, MEnvironment env)
+        private static EvalObject evalIdentifier(Identifier ident, MEnvironment env)
         {
             EvalObject o = env.Get(ident.value);
             if (o != null) {
@@ -149,13 +150,13 @@ namespace evaluator
         private static bool isError(EvalObject o)
         {
             if (o != null) {
-                return o.Type() == EvalObject.ERROR_OBJ;
+                return o.Type() == ERROR_OBJ;
             }
             return false;
         }
 
 
-        private static EvalObject evalIfExpression(ast.IfExpression ie, MEnvironment env)
+        private static EvalObject evalIfExpression(IfExpression ie, MEnvironment env)
         {
             EvalObject condition = Eval(ie.condition, env);
             if (isTruthy(condition)) {
@@ -192,7 +193,7 @@ namespace evaluator
                 result = Eval(s, env);
                 if (result != null) {
                     string rt = result.Type();
-                    if (rt == EvalObject.RETURN_VALUE_OBJ || rt == EvalObject.ERROR_OBJ) {
+                    if (rt == RETURN_VALUE_OBJ || rt == ERROR_OBJ) {
                         return result;
                     }
                 }
@@ -235,24 +236,24 @@ namespace evaluator
             } else if (op == "!=") {
                 return nativeBoolToBooleanObject(leftVal != rightVal);
             } else {
-                return new evalobject.Error($"unknown operator: {left.Type()} {op} {right.Type()}");
+                return new Error($"unknown operator: {left.Type()} {op} {right.Type()}");
             }
         }
 
         public static EvalObject evalInfixExpression(string op, EvalObject left, EvalObject right)
         {
-            if (left.Type() == EvalObject.INTEGER_OBJ && right.Type() == EvalObject.INTEGER_OBJ) {
+            if (left.Type() == INTEGER_OBJ && right.Type() == INTEGER_OBJ) {
                 return evalIntegerInfixExpression(op, left, right);
             } else if (op == "==") {
                 return nativeBoolToBooleanObject(left == right);
             } else if (op == "!=") {
                 return nativeBoolToBooleanObject(left != right);
             } else if (left.Type() != right.Type()) {
-                return new evalobject.Error($"type mismatch: {left.Type()} {op} {right.Type()}");
-            } else if (left.Type() == EvalObject.STRING_OBJ && right.Type() == EvalObject.STRING_OBJ) {
+                return new Error($"type mismatch: {left.Type()} {op} {right.Type()}");
+            } else if (left.Type() == STRING_OBJ && right.Type() == STRING_OBJ) {
                 return evalStringInfixExpression(op, left, right);
             } else {
-                return new evalobject.Error($"unknown operator: {left.Type()} {op} {right.Type()}");
+                return new Error($"unknown operator: {left.Type()} {op} {right.Type()}");
             }
         }
 
@@ -262,9 +263,9 @@ namespace evaluator
             if (op != "+") {
                 return new Error($"unknown operator: {left.Type()} {op} {right.Type()}");
             }
-            string leftVal = ((evalobject.String)left).Value;
-            string rightVal = ((evalobject.String)right).Value;
-            return new evalobject.String() {Value = leftVal + rightVal};
+            string leftVal = ((StrObj)left).Value;
+            string rightVal = ((StrObj)right).Value;
+            return new StrObj() {Value = leftVal + rightVal};
         }
 
 
@@ -274,7 +275,7 @@ namespace evaluator
             {
                 "!" => evalBangOperatorExpression(right),
                 "-" => evalMinusPrefixOperatorExpression(right),
-                _ =>  new evalobject.Error($"unknown operator: {op}{right.Type()}")
+                _ =>  new Error($"unknown operator: {op}{right.Type()}")
             };
         }
 
@@ -295,7 +296,7 @@ namespace evaluator
 
         public static EvalObject evalMinusPrefixOperatorExpression(EvalObject right)
         {
-            if (right.Type() != EvalObject.INTEGER_OBJ) {
+            if (right.Type() != INTEGER_OBJ) {
                 return new Error($"unknown operator: -{right.Type()}");
             }
             int value = ((Integer)right).Value;
@@ -303,9 +304,9 @@ namespace evaluator
         }
 
 
-        public static evalobject.Boolean nativeBoolToBooleanObject(bool input)
+        public static BoolObj nativeBoolToBooleanObject(bool input)
         {
-            return input ? Evaluator.TRUE : Evaluator.FALSE;
+            return input ? TRUE : FALSE;
         }
 
 

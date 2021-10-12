@@ -275,8 +275,8 @@ namespace evaluator_test
         {
             string input = "\"Hello\" + \" \" + \"World!\"";
             EvalObject evaluated = testEval(input);
-            Assert.IsType<evalobject.String>(evaluated);
-            evalobject.String str = (evalobject.String)evaluated;
+            Assert.IsType<evalobject.StrObj>(evaluated);
+            evalobject.StrObj str = (evalobject.StrObj)evaluated;
             Assert.Equal("Hello World!", str.Value);
         }
 
@@ -286,8 +286,8 @@ namespace evaluator_test
         {
             string input = "\"Hello world!\"";
             EvalObject evaluated = testEval(input);
-            Assert.IsType<evalobject.String>(evaluated);
-            evalobject.String str = (evalobject.String)evaluated;
+            Assert.IsType<evalobject.StrObj>(evaluated);
+            evalobject.StrObj str = (evalobject.StrObj)evaluated;
             Assert.Equal( "Hello world!", str.Value);
         }
 
@@ -386,8 +386,8 @@ namespace evaluator_test
 
         private void testBooleanObject(EvalObject obj, bool expected)
         {
-            Assert.IsType<evalobject.Boolean>(obj);
-            evalobject.Boolean result = (evalobject.Boolean)obj;
+            Assert.IsType<evalobject.BoolObj>(obj);
+            evalobject.BoolObj result = (evalobject.BoolObj)obj;
             Assert.Equal(result.Value, expected);
         }
     }

@@ -167,8 +167,8 @@ namespace ParserTest
 
         private void testBooleanLiteral(Expression expression, bool value)
         {
-            Assert.IsType<ast.Boolean>(expression);
-            ast.Boolean bo = (ast.Boolean)expression;
+            Assert.IsType<ast.AstBool>(expression);
+            ast.AstBool bo = (ast.AstBool)expression;
             Assert.Equal(bo.value, value);
             Assert.Equal(bo.TokenLiteral(), value.ToString());
         }

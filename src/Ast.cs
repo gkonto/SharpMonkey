@@ -48,7 +48,6 @@ namespace ast
         public Token t;
         public Expression function;
         public List<Expression> arguments;
-
         public override string TokenLiteral()
         {
             return t.Literal;
@@ -76,7 +75,6 @@ namespace ast
     {
         public Token token;
         public string Value;
-
         public override string TokenLiteral()
         {
             return token.Literal;
@@ -145,7 +143,7 @@ namespace ast
         }
     }
 
-    public class Boolean : Expression
+    public class AstBool : Expression
     {
         public Token token;
         public bool value;
@@ -341,6 +339,5 @@ namespace ast
 
             return buffer;
         }
-
     }
 }
