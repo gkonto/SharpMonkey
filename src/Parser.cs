@@ -328,14 +328,12 @@ namespace parser
 
         public Statement parseStatement()
         {
-            switch (curToken.Type) {
-                case LET:
-                    return parseLetStatement();
-                case RETURN:
-                    return parseReturnStatement();
-                default:
-                    return parseExpressionStatement();
-            }
+            return curToken.Type switch
+            {
+                LET => parseLetStatement(),
+                RETURN => parseReturnStatement(),
+                _ => parseExpressionStatement(),
+            };
         }
 
         public Expression parseIntegerLiteral()
@@ -384,7 +382,7 @@ namespace parser
             if (peekTokenIs(SEMICOLON)) {
                 nextToken();
             }
-                
+
             return stmt;
         }
 

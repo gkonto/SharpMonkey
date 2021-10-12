@@ -270,14 +270,12 @@ namespace evaluator
 
         public static EvalObject evalPrefixExpression(string op, EvalObject right)
         {
-            switch (op) {
-                case "!":
-                    return evalBangOperatorExpression(right);
-                case "-":
-                    return evalMinusPrefixOperatorExpression(right);
-                default:
-                    return new evalobject.Error($"unknown operator: {op}{right.Type()}");
-            }
+            return op switch 
+            {
+                "!" => evalBangOperatorExpression(right),
+                "-" => evalMinusPrefixOperatorExpression(right),
+                _ =>  new evalobject.Error($"unknown operator: {op}{right.Type()}")
+            };
         }
 
 
