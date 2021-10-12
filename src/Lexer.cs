@@ -12,7 +12,6 @@ namespace lexer
         public int ReadPosition { get; set; }
         public byte Ch { get; set; }
 
-
         public Lexer(string input)
         {
             Input = input;

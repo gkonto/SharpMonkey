@@ -33,7 +33,6 @@ namespace evalobject
         public BuiltinFunction Fn;
         public string Inspect() { return "builtin function"; }
         public string Type() { return EvalObject.BUILTIN_OBJ; }
-
     }
 
     public class String : EvalObject
@@ -48,7 +47,6 @@ namespace evalobject
         public List<Identifier> Parameters;
         public BlockStatement Body;
         public MEnvironment Env;
-
         public string Type() { return EvalObject.FUNCTION_OBJ; }
         public string Inspect()
         {
@@ -67,16 +65,16 @@ namespace evalobject
             input += "\n}";
             return input;
         }
-
     }
+
 
     public class ReturnValue : EvalObject
     {
         public EvalObject Value;
         public string Type() { return EvalObject.RETURN_VALUE_OBJ; }
         public string Inspect() { return Value.Inspect(); }
-
     }
+
 
     public class Boolean : EvalObject
     {
@@ -85,17 +83,20 @@ namespace evalobject
         public string Type() { return EvalObject.BOOLEAN_OBJ; }
     }
 
+
     public class Null : EvalObject
     {
         public string Inspect() { return EvalObject.NULL_OBJ; }
         public string Type() { return "null"; }
     }
 
+
     public class Error : EvalObject
     {
         public string Message;
         public string Type() { return EvalObject.ERROR_OBJ; }
         public string Inspect() { return "ERROR: " + Message; }
+
 
         public Error(string msg)
         {

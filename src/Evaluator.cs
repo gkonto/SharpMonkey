@@ -18,10 +18,8 @@ namespace evaluator
                 return new Error($"wrong number of arguments. got={args.Count}, want=1");
             }
             
-            Type t = args[0].GetType();
-            if (t == typeof(evalobject.String)) {
-                evalobject.String arg = (evalobject.String)args[0];
-                return new Integer() { Value = arg.Value.Length };
+            if (args[0] is evalobject.String str_arg) {
+                return new Integer() { Value = str_arg.Value.Length };
             } else {
                 return new Error($"argument to 'len' not supported, got {args[0].Type()}");
             }
@@ -30,56 +28,44 @@ namespace evaluator
         public static readonly evalobject.Boolean TRUE = new evalobject.Boolean { Value = true };
         public readonly static evalobject.Boolean FALSE = new evalobject.Boolean { Value = false };
         public readonly static evalobject.Null  NULL = new evalobject.Null();
+
         public static evalobject.EvalObject Eval(Node node, MEnvironment env)
         {
-            Type t = node.GetType();
-            if (t == typeof(IntegerLiteral)) {
-                return new Integer {Value = ((IntegerLiteral)node).value};
-            } else if (t == typeof(Program)) {
-                Program p = (Program)node;
+            if (node is IntegerLiteral i) {
+                return new Integer { Value = i.value };
+            } else if (node is Program p) {
                 return evalProgram(p, env);
-            } else if (t == typeof(ExpressionStatement)) {
-                ExpressionStatement stmt = (ExpressionStatement)node;
+            } else if (node is ExpressionStatement stmt) {
                 return Eval(stmt.expression, env);
-            } else if (t == typeof(ast.Boolean)) {
-                ast.Boolean b = (ast.Boolean)node;
+            } else if (node is ast.Boolean b) {
                 return nativeBoolToBooleanObject(b.value);
-            } else if (t == typeof(ast.PrefixExpression)) {
-                PrefixExpression p = (ast.PrefixExpression)node;
-                EvalObject right = Eval(p.right, env);
-                return evalPrefixExpression(p.Operator, right);
-            } else if (t == typeof(ast.InfixExpression)) {
-                ast.InfixExpression ie = (InfixExpression)node;
+            } else if (node is PrefixExpression prefexp) {
+                EvalObject right = Eval(prefexp.right, env);
+                return evalPrefixExpression(prefexp.Operator, right);
+            } else if (node is ast.InfixExpression ie) {
                 EvalObject left = Eval(ie.left, env);
                 EvalObject right = Eval(ie.right, env);
                 return evalInfixExpression(ie.Operator, left, right);
-            } else if (t == typeof(ast.BlockStatement)) {
-                ast.BlockStatement bs = (ast.BlockStatement)node;
+            } else if (node is ast.BlockStatement bs) {
                 return evalBlockStatement(bs, env);
-            } else if (t == typeof(ast.IfExpression)) {
-                ast.IfExpression ie = (ast.IfExpression)node;
-                return evalIfExpression(ie, env);
-            } else if (t == typeof(ast.ReturnStatement)) {
-                ast.ReturnStatement rs = (ast.ReturnStatement)node;
+            } else if (node is ast.IfExpression ifexp) {
+                return evalIfExpression(ifexp, env);
+            } else if (node is ast.ReturnStatement rs) {
                 EvalObject val = Eval(rs.returnValue, env);
                 return new evalobject.ReturnValue{Value = val};
-            } else if (t == typeof(ast.LetStatement)) {
-                ast.LetStatement ls = (ast.LetStatement)node;
+            } else if (node is ast.LetStatement ls) {
                 EvalObject val = Eval(ls.value, env);
                 if (isError(val)) {
                     return val;
                 }
                 env.Set(ls.name.value, val);
-            } else if (t == typeof(ast.Identifier)) {
-                ast.Identifier i = (ast.Identifier)node;
-                return evalIdentifier(i, env);  
-            } else if (t == typeof(ast.FunctionLiteral)) {
-                FunctionLiteral fl = (FunctionLiteral)node;
-                List<Identifier> p = fl.parameters;
-                BlockStatement b = fl.body;
-                return new Function() { Parameters = p, Env = env, Body = b};
-            } else if (t == typeof(ast.CallExpression)) {
-                CallExpression ce = (ast.CallExpression)node;
+            } else if (node is ast.Identifier ident) {
+                return evalIdentifier(ident, env);  
+            } else if (node is ast.FunctionLiteral funlit) {
+                List<Identifier> par = funlit.parameters;
+                BlockStatement block = funlit.body;
+                return new Function() { Parameters = par, Env = env, Body = block};
+            } else if (node is ast.CallExpression ce) {
                 EvalObject function = Eval(ce.function, env);
                 if (isError(function)) {
                     return function;
@@ -90,8 +76,7 @@ namespace evaluator
                     return args[0];
                 }
                 return applyFunction(function, args);
-            } else if (t == typeof(ast.StringLiteral)) {
-                StringLiteral str = (StringLiteral)node;
+            } else if (node is ast.StringLiteral str) {
                 return new evalobject.String() { Value = str.Value };
             }
 
@@ -100,19 +85,15 @@ namespace evaluator
 
         private static EvalObject applyFunction(EvalObject fn, List<EvalObject> args)
         {
-            Type t = fn.GetType();
-            if (t == typeof(Function)) {
-                Function function = (Function)fn;   
-                MEnvironment extendedEnv = extendFunctionEnv(function, args);
-                EvalObject evaluated = Eval(function.Body, extendedEnv);
+            if (fn is Function fun) {
+                MEnvironment extendedEnv = extendFunctionEnv(fun, args);
+                EvalObject evaluated = Eval(fun.Body, extendedEnv);
                 return unwrapReturnValue(evaluated);
-            } else if (t == typeof(Builtin)) {
-                Builtin b = (Builtin)fn;
-                return b.Fn(args);
+            } else if (fn is Builtin builtin) {
+                return builtin.Fn(args);
             } else {
                 return new Error($"not a function: {fn.Type()}");
             }
-
         }
 
         private static MEnvironment extendFunctionEnv(Function fn, List<EvalObject> args)
@@ -126,9 +107,7 @@ namespace evaluator
 
         private static EvalObject unwrapReturnValue(EvalObject obj)
         {
-            Type t = obj.GetType();
-            if (t == typeof(ReturnValue)) {
-                ReturnValue rv = (ReturnValue)obj;
+            if (obj is ReturnValue rv) {
                 return rv.Value;
             }
             return obj;
@@ -163,9 +142,9 @@ namespace evaluator
                 return b;
             }
 
-
             return new Error($"identifier not found: {ident.value}");
         }
+
 
         private static bool isError(EvalObject o)
         {
@@ -174,6 +153,7 @@ namespace evaluator
             }
             return false;
         }
+
 
         private static EvalObject evalIfExpression(ast.IfExpression ie, MEnvironment env)
         {
@@ -187,23 +167,23 @@ namespace evaluator
             }
         }
 
+
         private static EvalObject evalProgram(Program program, MEnvironment env)
         {
             EvalObject result = null;
             foreach (Statement s in program.statements) {
                 result = Eval(s, env);
                 if (result != null) {
-                    Type t = result.GetType();
-                    if (t == typeof(ReturnValue)) {
-                        ReturnValue rv = (ReturnValue)result;
+                    if (result is ReturnValue rv) {
                         return rv.Value;
-                    } else if (t == typeof(Error)) {
-                        return result;
+                    } else if (result is Error err) {
+                        return err;
                     }
                 }
             }
             return result;
         }
+
 
         private static EvalObject evalBlockStatement(BlockStatement bs, MEnvironment env)
         {
@@ -233,7 +213,7 @@ namespace evaluator
             }
         }
         
-        public static EvalObject evalIntegerInfixExpression(string op,EvalObject left, EvalObject right)
+        public static EvalObject evalIntegerInfixExpression(string op, EvalObject left, EvalObject right)
         {
             int leftVal = ((Integer)left).Value;
             int rightVal = ((Integer)right).Value;
@@ -276,6 +256,7 @@ namespace evaluator
             }
         }
 
+
         public static EvalObject evalStringInfixExpression(string op, EvalObject left, EvalObject right)
         {
             if (op != "+") {
@@ -285,6 +266,7 @@ namespace evaluator
             string rightVal = ((evalobject.String)right).Value;
             return new evalobject.String() {Value = leftVal + rightVal};
         }
+
 
         public static EvalObject evalPrefixExpression(string op, EvalObject right)
         {
@@ -298,6 +280,7 @@ namespace evaluator
             }
         }
 
+
         public static EvalObject evalBangOperatorExpression(EvalObject right)
         {
             if (right ==  TRUE) {
@@ -310,6 +293,7 @@ namespace evaluator
                 return FALSE;
             }
         }
+
 
         public static EvalObject evalMinusPrefixOperatorExpression(EvalObject right)
         {
@@ -326,15 +310,14 @@ namespace evaluator
             return input ? Evaluator.TRUE : Evaluator.FALSE;
         }
 
+
         public static EvalObject evalStatements(List<Statement> stmts, MEnvironment env)
         {
             EvalObject result = null;
 
             foreach(Statement stmt in stmts) {
                 result = Eval(stmt, env);
-                Type t = result.GetType();
-                if (t == typeof(evalobject.ReturnValue)) {
-                    evalobject.ReturnValue r = (evalobject.ReturnValue)result;
+                if (result is ReturnValue r) {
                     return r.Value;
                 }
             }

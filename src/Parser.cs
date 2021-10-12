@@ -58,7 +58,7 @@ namespace parser
             registerPrefix(IF, parseIfExpression);
             registerPrefix(FUNCTION, parseFunctionLiteral);
             registerPrefix(STRING, parseStringLiteral);
-           
+        
             registerInfix(PLUS, parseInfixExpression);
             registerInfix(MINUS, parseInfixExpression);
             registerInfix(SLASH, parseInfixExpression);
@@ -103,9 +103,11 @@ namespace parser
             if (!expectPeek(LBRACE)) {
                 return null;
             }
+
             lit.body = parseBlockStatement();
             return lit;
         }
+
 
         public List<Identifier> parseFunctionParameters()
         {
@@ -127,9 +129,11 @@ namespace parser
                 Identifier ident2 = new Identifier() {token = curToken, value = curToken.Literal};
                 identifiers.Add(ident2);
             }
+
             if (!expectPeek(RPAREN)) {
                 return null;
             }
+
             return identifiers;
         }
 
@@ -139,6 +143,7 @@ namespace parser
             if (!expectPeek(LPAREN)) {
                 return null;
             }
+
             nextToken();
             expression.condition = parseExpression(Precedence.LOWEST);
 
@@ -175,16 +180,19 @@ namespace parser
             return exp;
         }
 
+
         public Expression parseBoolean()
         {
             return new ast.Boolean() {token = curToken, value = curTokenIs(TRUE)};
         }
+
 
         public Expression parseCallExpression(Expression fun)
         {
             CallExpression exp = new CallExpression() {t = curToken, function = fun, arguments = parseCallArguments()};
             return exp;    
         }
+
 
         public List<Expression> parseCallArguments()
         {
@@ -227,6 +235,7 @@ namespace parser
             return expression;
         }
 
+
         public Expression parsePrefixExpression()
         {
             PrefixExpression expression = new PrefixExpression() {token = curToken, Operator = curToken.Literal};
@@ -235,21 +244,25 @@ namespace parser
             return expression;
         }
 
+
         private void registerPrefix(TokenType tt, prefixParseFn fn)
         {
             prefixParseFns.Add(tt, fn);
         }
+
 
         private void registerInfix(TokenType tt, infixParseFn fn)
         {
             infixParseFns.Add(tt, fn);
         }
 
+
         public void noPrefixParseFnError(TokenType t)
         {
             string msg = $"no prefix parse function for {t} found";
             errors.Add(msg);
         }
+
 
         public Precedence peekPrecedence()
         {
@@ -258,6 +271,7 @@ namespace parser
             return p;
         }
 
+
         public Precedence curPrecedence()  
         {
             Precedence p = Precedence.LOWEST;
@@ -265,16 +279,19 @@ namespace parser
             return p;
         }
 
+
         public void peekError(TokenType t)
         {
             errors.Add($"expected next token to be {t}, got {peekToken.Type} instead");
         }
+
 
         public void nextToken()
         {
             curToken = peekToken;
             peekToken = lexer.NextToken();
         }
+
 
         public Program ParseProgram()
         {
@@ -347,10 +364,11 @@ namespace parser
             var leftExp = prefix();
 
             while (!peekTokenIs(SEMICOLON) && precedence < peekPrecedence()) {
-                infixParseFn infix;
+                infixParseFn infix;   
                 if (!infixParseFns.TryGetValue(peekToken.Type, out infix)) {
                     return leftExp;
                 }
+
                 nextToken();
                 leftExp = infix(leftExp);
             }
@@ -360,14 +378,13 @@ namespace parser
 
         public ExpressionStatement parseExpressionStatement()
         {
-            ExpressionStatement stmt = new ExpressionStatement() {token = curToken};
-            
+            ExpressionStatement stmt = new ExpressionStatement() {token = curToken};    
             stmt.expression = parseExpression(Precedence.LOWEST);
             
             if (peekTokenIs(SEMICOLON)) {
                 nextToken();
             }
-            
+                
             return stmt;
         }
 

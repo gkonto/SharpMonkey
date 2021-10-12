@@ -31,6 +31,7 @@ namespace repl
                 if (input.Length == 0) {
                     break;
                 }
+                
                 var watch = System.Diagnostics.Stopwatch.StartNew();
                 Lexer l = new Lexer(input);
 
