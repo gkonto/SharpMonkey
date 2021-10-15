@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+
         {
             // Use IntelliSense to find out which attributes exist for C# debugging
             // Use hover for the description of the existing attributes
@@ -10,11 +11,11 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/main/bin/Debug/net5.0/main.dll",
+            "program": "${workspaceFolder}\\src\\bin\\Debug\\netcoreapp3.1\\sharpmonkey.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/main",
+            "cwd": "${workspaceFolder}\\src",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-            "console": "internalConsole",
+            "console": "integratedTerminal",
             "stopAtEntry": false
         },
         {
