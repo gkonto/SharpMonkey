@@ -47,9 +47,7 @@ namespace monkey
         public Node Value;
         public string Inspect() {
             DotBuilder builder = new DotBuilder();
-            System.Console.WriteLine("geia");
             Value.Accept(builder);
-            System.Console.WriteLine("geia");
 
             string d = "graph AST {\n";
             d += builder.build();
