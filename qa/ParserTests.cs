@@ -425,6 +425,26 @@ namespace ParserTest
         }
 
         [Fact]
+        public void TestDotStatement()
+        {
+            string input = ".1+2";
+            Lexer l = new Lexer(input);
+            Parser p = new Parser(l);
+            Program program = p.ParseProgram();
+            checkParserErrors(p);
+            if (program != null) {
+                Assert.Single(program.statements);
+            }
+            if (program != null) {
+                foreach (Statement stmt in program.statements) {
+                    Assert.IsType<DotStatement>(stmt);
+                    DotStatement returnStmt = (DotStatement)stmt;
+                    Assert.Equal(".", returnStmt.TokenLiteral());
+                }
+            }
+        }
+
+        [Fact]
         public void TestReturnStatements()
         {
             string input = @"return 5;

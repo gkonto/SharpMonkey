@@ -179,6 +179,10 @@ namespace lexer
                     tok.Type = STRING;
                     tok.Literal = readString();
                     break;
+                case '.':
+                    tok.Type = DOT;
+                    tok.Literal = ".";
+                    break;
                 default:
                     if (isLetter()) {
                         tok.Literal = readIdentifier();

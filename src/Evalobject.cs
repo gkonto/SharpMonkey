@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ast;
 using menvironment;
+using monkey;
 using static evalobject.EvalObject;
 using static evaluator.Evaluator;
 
@@ -16,6 +17,8 @@ namespace evalobject
         static readonly string FUNCTION_OBJ = "FUNCTION";
         static readonly string STRING_OBJ = "STRING";
         static readonly string BUILTIN_OBJ = "BUILTIN";
+        static readonly string DOT_OBJ = "DOT";
+
 
         string Type();
         string Inspect();
@@ -41,6 +44,23 @@ namespace evalobject
         public string Value;
         public string Inspect() { return Value; }
         public string Type() { return STRING_OBJ; }
+    }
+
+    public class DotObj : EvalObject
+    {
+        public Node Value;
+        public string Inspect() {
+            DotBuilder builder = new DotBuilder();
+            System.Console.WriteLine("geia");
+            Value.Accept(builder);
+            System.Console.WriteLine("geia");
+
+            string d = "graph AST {\n";
+            d += builder.build();
+            d += "}";
+            return d;
+        }
+        public string Type() { return DOT_OBJ; }
     }
 
     public class Function : EvalObject

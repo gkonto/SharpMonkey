@@ -33,7 +33,8 @@ namespace token
         RETURN,
         EQ,
         NOT_EQ,
-        STRING
+        STRING,
+        DOT,
     }
 
     public class Token
@@ -57,7 +58,8 @@ namespace token
             {"False", TokenType.FALSE},
             {"if", TokenType.IF},
             {"else", TokenType.ELSE},
-            {"return", TokenType.RETURN}
+            {"return", TokenType.RETURN},
+            {".", TokenType.DOT}
         };
     }
 }

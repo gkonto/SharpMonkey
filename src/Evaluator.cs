@@ -10,7 +10,8 @@ namespace evaluator
     public class Evaluator
     {
         public static Dictionary<string, Builtin> Builtins = new Dictionary<string, Builtin>() {
-            {"len", new Builtin() {Fn = len} }
+            {"len", new Builtin() {Fn = len} },
+            {"toDot", new Builtin() { Fn = toDot}}
         };
 
         public static EvalObject len(List<EvalObject> args) 
@@ -23,6 +24,19 @@ namespace evaluator
                 return new Integer() { Value = str_arg.Value.Length };
             } else {
                 return new Error($"argument to 'len' not supported, got {args[0].Type()}");
+            }
+        }
+
+        public static EvalObject toDot(List<EvalObject> args)
+        {
+            if (args.Count != 1) {
+                return new Error($"wrong number of arguments. got={args.Count}, want=1");
+            }
+
+            if (args[0] is StrObj str_obj) {
+                return str_obj;
+            } else {
+                return new Error($"argument to 'toDot' not supported, got {args[0].Type()}");
             }
         }
 
@@ -79,6 +93,8 @@ namespace evaluator
                 return applyFunction(function, args);
             } else if (node is StringLiteral str) {
                 return new StrObj() { Value = str.Value };
+            } else if (node is DotStatement dotStatement) {
+                return new DotObj() { Value = dotStatement.right };
             }
 
             return null;

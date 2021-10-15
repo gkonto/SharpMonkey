@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using token;
+using monkey;
 
 namespace ast
 {
@@ -7,14 +8,16 @@ namespace ast
     {
         public virtual string TokenLiteral() { return ""; }
         public virtual string String() { return ""; }
+        public virtual string toDot(int depth) { return ""; }
+        public abstract void Accept(Visitor v);
     }
 
-    public class Statement : Node
+    public abstract class Statement : Node
     {
 
     }
 
-    public class Expression : Node
+    public abstract class Expression : Node
     {
     
     }
@@ -22,6 +25,19 @@ namespace ast
     public class Program : Node
     {
         public List<Statement> statements = new List<Statement>();
+
+        public override void Accept(Visitor v) { v.visit(this); }
+
+        public override string toDot(int rank)
+        {
+            rank++;
+            string d = $"{rank.ToString()}[label = {String()}];\n";
+            foreach (Statement stmt in statements) {
+                d += stmt.toDot(rank); 
+            }
+
+            return d; 
+        }
 
         public override string TokenLiteral()
         {
@@ -65,10 +81,10 @@ namespace ast
             buffer += System.String.Join(", ", args.ToArray());
             buffer += ")";
 
-
-
             return buffer;
         }
+        public override void Accept(Visitor v) { v.visit(this); }
+
     }
 
     public class StringLiteral : Expression
@@ -85,6 +101,7 @@ namespace ast
             return token.Literal;
         }
 
+        public override void Accept(Visitor v) { v.visit(this); }
     }
 
     public class FunctionLiteral : Expression
@@ -115,6 +132,9 @@ namespace ast
 
             return input;
         } 
+
+        public override void Accept(Visitor v) { v.visit(this); }
+
     }
 
     public class InfixExpression : Expression
@@ -123,6 +143,19 @@ namespace ast
         public Expression left;
         public string Operator;
         public Expression right;
+
+        
+        public override string toDot(int id)
+        {
+            int parent = id;
+            id++;
+            string d = $"\t{id.ToString()} [label = \"{GetType().Name} - {TokenLiteral()}\"];\n";
+            d += $"\t{parent} -- {id}\n";
+            d += left.toDot(id);
+            d += right.toDot(id);
+            
+            return d; 
+        }
 
         public override string TokenLiteral()
         {
@@ -141,6 +174,8 @@ namespace ast
 
             return input;
         }
+        public override void Accept(Visitor v) { v.visit(this); }
+
     }
 
     public class AstBool : Expression
@@ -151,11 +186,52 @@ namespace ast
         {
             return token.Literal;
         }
+        
+        public override string toDot(int rank)
+        {
+            rank++;
+            string d = $"{rank.ToString()} [label = {GetType().Name} - {String()}];\n";
+            return d; 
+        }
 
         public override string String()
         {
             return token.Literal;
         }
+
+        public override void Accept(Visitor v) { v.visit(this); }
+
+    }
+
+    public class DotStatement : Statement
+    {
+        public Token token;
+        public Node right;
+        public DotStatement(Token t)
+        {
+            token = t;
+        }
+
+        public override string TokenLiteral()
+        {
+            return token.Literal;
+        }
+
+        public override string String()
+        {
+            string buffer = "";
+            buffer += TokenLiteral() + " ";
+
+            if (right != null) {
+                buffer += right.String();
+            }
+            buffer += ";";
+
+            return buffer;
+        }
+
+        public override void Accept(Visitor v) { v.visit(this); }
+
     }
 
     public class PrefixExpression : Expression
@@ -163,6 +239,15 @@ namespace ast
         public Token token;
         public string Operator;
         public Expression right;
+
+        
+        public override string toDot(int rank)
+        {
+            rank++;
+            string d = $"{rank.ToString()} [label = {GetType().Name} - {String()}];\n";
+            d += right.toDot(rank);
+            return d; 
+        }
 
         public override string TokenLiteral()
         {
@@ -178,6 +263,8 @@ namespace ast
             input += ")";
             return input;
         }
+
+        public override void Accept(Visitor v) { v.visit(this); }
     }
 
     public class BlockStatement : Statement
@@ -198,6 +285,9 @@ namespace ast
             }
             return buffer;
         }
+
+        public override void Accept(Visitor v) { v.visit(this); }
+
     }
 
     public class IfExpression : Expression
@@ -225,12 +315,22 @@ namespace ast
             }
             return buffer;
         }
+        public override void Accept(Visitor v) { v.visit(this); }
     }
 
     public class ExpressionStatement : Statement
     {
         public Token token;
         public Expression expression { get; set; }
+        
+        public override string toDot(int rank)
+        {
+            rank++;
+            string d = $"{rank.ToString()} [label = {GetType().Name} - {String()}];\n";
+            d += expression.toDot(rank);
+            return d; 
+        }
+
         public override string TokenLiteral()
         {
             return token.Literal;
@@ -247,6 +347,7 @@ namespace ast
             return buffer;
         }
 
+        public override void Accept(Visitor v) { v.visit(this); }
     }
 
     public class LetStatement : Statement
@@ -275,12 +376,23 @@ namespace ast
 
             return buffer;
         }
+
+        public override void Accept(Visitor v) { v.visit(this); }
+
     }
 
     public class Identifier : Expression
     {
         public Token token;
         public string value;
+
+        
+        public override string toDot(int rank)
+        {
+            rank++;
+            string d = $"{rank.ToString()} [label = {GetType().Name} - {String()}];\n";
+            return d; 
+        }
 
         public void expressionNode() {}
         public override string TokenLiteral()
@@ -290,17 +402,25 @@ namespace ast
 
         public override string String()
         {
-            string buffer = "";
-            buffer += value;
-            return buffer;
+            return value;
         }
+
+        public override void Accept(Visitor v) { v.visit(this); }
+
     }
 
     public class IntegerLiteral : Expression
     {
         public Token token;
         public int value;
-
+        public override string toDot(int id)
+        {
+            int parent = id;
+            id++;
+            string d = $"\t{id.ToString()} [label = \"{GetType().Name} - {String()}\"];\n";
+            d += $"\t{parent} -- {id}\n";
+            return d; 
+        }
         public override string TokenLiteral()
         {
             return token.Literal;
@@ -310,6 +430,8 @@ namespace ast
         {
             return token.Literal;
         }
+        public override void Accept(Visitor v) { v.visit(this); }
+
     }
 
     public class ReturnStatement : Statement
@@ -327,6 +449,8 @@ namespace ast
             return token.Literal;
         }
 
+        
+
         public override string String()
         {
             string buffer = "";
@@ -339,5 +463,7 @@ namespace ast
 
             return buffer;
         }
+        public override void Accept(Visitor v) { v.visit(this); }
+
     }
 }

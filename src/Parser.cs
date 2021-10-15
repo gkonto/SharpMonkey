@@ -333,6 +333,7 @@ namespace parser
             {
                 LET => parseLetStatement(),
                 RETURN => parseReturnStatement(),
+                DOT => parseDotStatement(),
                 _ => parseExpressionStatement(),
             };
         }
@@ -384,6 +385,20 @@ namespace parser
                 nextToken();
             }
 
+            return stmt;
+        }
+
+        public DotStatement parseDotStatement()
+        {
+            DotStatement stmt = new DotStatement(curToken);
+            nextToken();
+
+            stmt.right = parseStatement();
+            
+            if (peekTokenIs(SEMICOLON)) {
+                nextToken();
+            }
+            
             return stmt;
         }
 
