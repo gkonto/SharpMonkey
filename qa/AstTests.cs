@@ -1,8 +1,8 @@
 using System;
 using Xunit;
-using ast;
-using token;
-using static token.TokenType;
+using monkey;
+using static monkey.TokenType;
+
 
 namespace ast_test
 {

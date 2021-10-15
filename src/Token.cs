@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace token
+namespace monkey
 {
 
     public enum TokenType

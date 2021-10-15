@@ -1,11 +1,8 @@
-using System;
 using Xunit;
-using lexer;
-using static System.Console;
 using Xunit.Abstractions;
 using System.Collections.Generic;
-using token;
-using static token.TokenType;
+using monkey;
+using static monkey.TokenType;
 
 namespace lexer_test
 {
@@ -86,7 +83,7 @@ namespace lexer_test
         {
             string input = "\"foobar\"";
             var tests = new List<Token>() {
-                new Token() {Type = STRING, Literal = "foobar"},
+                new Token() {Type = TokenType.STRING, Literal = "foobar"},
                 new Token() {Type = EOF, Literal = ""},
             };
 

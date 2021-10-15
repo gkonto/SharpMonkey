@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using token;
-using monkey;
 
-namespace ast
+namespace monkey
 {
     public abstract class Node 
     {

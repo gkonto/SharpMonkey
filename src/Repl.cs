@@ -1,13 +1,8 @@
 using static System.Console;
 using System.Collections.Generic;
-using lexer;
-using parser;
-using ast;
-using evaluator;
-using menvironment;
-using evalobject;
 
-namespace repl
+
+namespace monkey
 {
     public class Repl
     {

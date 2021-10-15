@@ -1,12 +1,8 @@
 using System;
 using Xunit;
 using System.Collections.Generic;
-using lexer;
-using parser;
-using ast;
-using evaluator;
-using evalobject;
-using menvironment;
+using monkey;
+using static monkey.TokenType;
 
 //let fib = fn(x) { if (x==0) { return 0; } else { if (x==1) { return 1; } else { fib(x - 1) + fib(x - 2); } } };
 
@@ -112,8 +108,8 @@ namespace evaluator_test
 
             foreach (TestErrorHandlingCase tt in tests) {
                 EvalObject evaluated = testEval(tt.input);
-                Assert.IsType<evalobject.Error>(evaluated);
-                evalobject.Error e = (evalobject.Error)evaluated;
+                Assert.IsType<Error>(evaluated);
+                Error e = (Error)evaluated;
                 Assert.Equal(e.Message, tt.expected);
             }
         }
@@ -275,8 +271,8 @@ namespace evaluator_test
         {
             string input = "\"Hello\" + \" \" + \"World!\"";
             EvalObject evaluated = testEval(input);
-            Assert.IsType<evalobject.StrObj>(evaluated);
-            evalobject.StrObj str = (evalobject.StrObj)evaluated;
+            Assert.IsType<StrObj>(evaluated);
+            StrObj str = (StrObj)evaluated;
             Assert.Equal("Hello World!", str.Value);
         }
 
@@ -286,8 +282,8 @@ namespace evaluator_test
         {
             string input = "\"Hello world!\"";
             EvalObject evaluated = testEval(input);
-            Assert.IsType<evalobject.StrObj>(evaluated);
-            evalobject.StrObj str = (evalobject.StrObj)evaluated;
+            Assert.IsType<StrObj>(evaluated);
+            StrObj str = (StrObj)evaluated;
             Assert.Equal( "Hello world!", str.Value);
         }
 
@@ -386,8 +382,8 @@ namespace evaluator_test
 
         private void testBooleanObject(EvalObject obj, bool expected)
         {
-            Assert.IsType<evalobject.BoolObj>(obj);
-            evalobject.BoolObj result = (evalobject.BoolObj)obj;
+            Assert.IsType<BoolObj>(obj);
+            BoolObj result = (BoolObj)obj;
             Assert.Equal(result.Value, expected);
         }
     }

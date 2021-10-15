@@ -1,11 +1,8 @@
-﻿using ast;
-using System.Collections.Generic;
-using menvironment;
-using evalobject;
-using static evalobject.EvalObject;
-using static evaluator.Evaluator;
+﻿using System.Collections.Generic;
+using static monkey.TokenType;
 
-namespace evaluator
+
+namespace monkey
 {
     public class Evaluator
     {
@@ -166,7 +163,7 @@ namespace evaluator
         private static bool isError(EvalObject o)
         {
             if (o != null) {
-                return o.Type() == ERROR_OBJ;
+                return o.Type() == EvalObject.ERROR_OBJ;
             }
             return false;
         }
@@ -209,7 +206,7 @@ namespace evaluator
                 result = Eval(s, env);
                 if (result != null) {
                     string rt = result.Type();
-                    if (rt == RETURN_VALUE_OBJ || rt == ERROR_OBJ) {
+                    if (rt == EvalObject.RETURN_VALUE_OBJ || rt == EvalObject.ERROR_OBJ) {
                         return result;
                     }
                 }
@@ -258,7 +255,7 @@ namespace evaluator
 
         public static EvalObject evalInfixExpression(string op, EvalObject left, EvalObject right)
         {
-            if (left.Type() == INTEGER_OBJ && right.Type() == INTEGER_OBJ) {
+            if (left.Type() == EvalObject.INTEGER_OBJ && right.Type() == EvalObject.INTEGER_OBJ) {
                 return evalIntegerInfixExpression(op, left, right);
             } else if (op == "==") {
                 return nativeBoolToBooleanObject(left == right);
@@ -266,7 +263,7 @@ namespace evaluator
                 return nativeBoolToBooleanObject(left != right);
             } else if (left.Type() != right.Type()) {
                 return new Error($"type mismatch: {left.Type()} {op} {right.Type()}");
-            } else if (left.Type() == STRING_OBJ && right.Type() == STRING_OBJ) {
+            } else if (left.Type() == EvalObject.STRING_OBJ && right.Type() == EvalObject.STRING_OBJ) {
                 return evalStringInfixExpression(op, left, right);
             } else {
                 return new Error($"unknown operator: {left.Type()} {op} {right.Type()}");
@@ -312,7 +309,7 @@ namespace evaluator
 
         public static EvalObject evalMinusPrefixOperatorExpression(EvalObject right)
         {
-            if (right.Type() != INTEGER_OBJ) {
+            if (right.Type() != EvalObject.INTEGER_OBJ) {
                 return new Error($"unknown operator: -{right.Type()}");
             }
             int value = ((Integer)right).Value;

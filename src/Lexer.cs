@@ -1,9 +1,7 @@
 ﻿using System;
-using token;
-using static token.TokenType;
-using static System.Console;
+using static monkey.TokenType;
 
-namespace lexer
+namespace monkey
 {
     public class Lexer
     {

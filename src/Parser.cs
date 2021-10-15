@@ -1,12 +1,8 @@
-using System;
-using lexer;
-using token;
-using ast;
-using static token.TokenType;
-using static parser.Precedence;
 using System.Collections.Generic;
+using static monkey.TokenType;
+using static monkey.Precedence;
 
-namespace parser
+namespace monkey
 {
     public enum Precedence
     {
@@ -25,7 +21,7 @@ namespace parser
 
     public class Parser
     {
-        lexer.Lexer lexer;
+        Lexer lexer;
         Token curToken = new Token() {Type = ILLEGAL, Literal = ""};
         Token peekToken = new Token() {Type = ILLEGAL, Literal = ""};
         public List<string> errors { set; get; }
@@ -184,7 +180,7 @@ namespace parser
 
         public Expression parseBoolean()
         {
-            return new ast.AstBool() {token = curToken, value = curTokenIs(TRUE)};
+            return new AstBool() {token = curToken, value = curTokenIs(TRUE)};
         }
 
 

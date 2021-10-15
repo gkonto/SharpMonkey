@@ -1,11 +1,7 @@
 ﻿using System.Collections.Generic;
-using ast;
-using menvironment;
-using monkey;
-using static evalobject.EvalObject;
-using static evaluator.Evaluator;
+using static monkey.TokenType;
 
-namespace evalobject
+namespace monkey
 {
     public interface EvalObject
     {
@@ -28,7 +24,7 @@ namespace evalobject
     {
         public int Value;
         public string Inspect() { return Value.ToString(); }
-        public string Type() { return INTEGER_OBJ; }
+        public string Type() { return EvalObject.INTEGER_OBJ; }
     }
 
     public class Builtin : EvalObject
@@ -36,14 +32,14 @@ namespace evalobject
         public delegate EvalObject BuiltinFunction(List<EvalObject> args);
         public BuiltinFunction Fn;
         public string Inspect() { return "builtin function"; }
-        public string Type() { return BUILTIN_OBJ; }
+        public string Type() { return EvalObject.BUILTIN_OBJ; }
     }
 
     public class StrObj : EvalObject
     {
         public string Value;
         public string Inspect() { return Value; }
-        public string Type() { return STRING_OBJ; }
+        public string Type() { return EvalObject.STRING_OBJ; }
     }
 
     public class DotObj : EvalObject
@@ -60,7 +56,7 @@ namespace evalobject
             d += "}";
             return d;
         }
-        public string Type() { return DOT_OBJ; }
+        public string Type() { return EvalObject.DOT_OBJ; }
     }
 
     public class Function : EvalObject
@@ -68,7 +64,7 @@ namespace evalobject
         public List<Identifier> Parameters;
         public BlockStatement Body;
         public MEnvironment Env;
-        public string Type() { return FUNCTION_OBJ; }
+        public string Type() { return EvalObject.FUNCTION_OBJ; }
         public string Inspect()
         {
             string input = "";
@@ -92,7 +88,7 @@ namespace evalobject
     public class ReturnValue : EvalObject
     {
         public EvalObject Value;
-        public string Type() { return RETURN_VALUE_OBJ; }
+        public string Type() { return EvalObject.RETURN_VALUE_OBJ; }
         public string Inspect() { return Value.Inspect(); }
     }
 
@@ -101,13 +97,13 @@ namespace evalobject
     {
         public bool Value;
         public string Inspect() { return Value.ToString(); }
-        public string Type() { return BOOLEAN_OBJ; }
+        public string Type() { return EvalObject.BOOLEAN_OBJ; }
     }
 
 
     public class Null : EvalObject
     {
-        public string Inspect() { return NULL_OBJ; }
+        public string Inspect() { return EvalObject.NULL_OBJ; }
         public string Type() { return "null"; }
     }
 
@@ -115,7 +111,7 @@ namespace evalobject
     public class Error : EvalObject
     {
         public string Message;
-        public string Type() { return ERROR_OBJ; }
+        public string Type() { return EvalObject.ERROR_OBJ; }
         public string Inspect() { return "ERROR: " + Message; }
 
 

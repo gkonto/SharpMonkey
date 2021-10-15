@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using evalobject;
 
-namespace menvironment
+namespace monkey
 {
     public class MEnvironment
     {

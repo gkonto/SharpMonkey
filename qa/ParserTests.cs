@@ -1,8 +1,6 @@
 using System;
 using Xunit;
-using lexer;
-using parser;
-using ast;
+using monkey;
 using System.Collections.Generic;
 using Xunit.Abstractions;
 
@@ -167,8 +165,8 @@ namespace ParserTest
 
         private void testBooleanLiteral(Expression expression, bool value)
         {
-            Assert.IsType<ast.AstBool>(expression);
-            ast.AstBool bo = (ast.AstBool)expression;
+            Assert.IsType<AstBool>(expression);
+            AstBool bo = (AstBool)expression;
             Assert.Equal(bo.value, value);
             Assert.Equal(bo.TokenLiteral(), value.ToString());
         }
