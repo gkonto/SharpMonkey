@@ -34,7 +34,7 @@ namespace lexer_test
                             10 == 10;
                             10 != 9;
                             ";
-            var tests = new List<Token>() {
+            var tests = new List<Token> {
             };
 
             TestCore(input, tests);
@@ -44,8 +44,8 @@ namespace lexer_test
         public void TestNextToken4()
         {
             string input = "let";
-            var tests = new List<Token>() {
-                new Token() {Type = LET, Literal = "let"},
+            var tests = new List<Token> {
+                new Token{Type = LET, Literal = "let"},
             };
 
             TestCore(input, tests);
@@ -55,9 +55,9 @@ namespace lexer_test
         public void TextNextToken3()
         {
             string input = "let five";
-            var tests = new List<Token>() {
-                new Token() {Type = LET, Literal = "let"},
-                new Token() {Type = IDENT, Literal = "five"},
+            var tests = new List<Token>{
+                new Token{Type = LET, Literal = "let"},
+                new Token{Type = IDENT, Literal = "five"},
             };
 
             TestCore(input, tests);
@@ -67,12 +67,12 @@ namespace lexer_test
         public void TestNextToken2()
         {
             string input = "let five = 5;";
-            var tests = new List<Token>() {
-                new Token() {Type = LET, Literal = "let"},
-                new Token() {Type = IDENT, Literal = "five"},
-                new Token() {Type = ASSIGN, Literal = "="},
-                new Token() {Type = INT, Literal = "5"},
-                new Token() {Type = SEMICOLON, Literal = ";"},
+            var tests = new List<Token>{
+                new Token{Type = LET, Literal = "let"},
+                new Token{Type = IDENT, Literal = "five"},
+                new Token{Type = ASSIGN, Literal = "="},
+                new Token{Type = INT, Literal = "5"},
+                new Token{Type = SEMICOLON, Literal = ";"},
             };
 
             TestCore(input, tests);
@@ -82,9 +82,9 @@ namespace lexer_test
         public void TestNextToken6()
         {
             string input = "\"foobar\"";
-            var tests = new List<Token>() {
-                new Token() {Type = TokenType.STRING, Literal = "foobar"},
-                new Token() {Type = EOF, Literal = ""},
+            var tests = new List<Token>{
+                new Token{Type = TokenType.STRING, Literal = "foobar"},
+                new Token{Type = EOF, Literal = ""},
             };
 
             TestCore(input, tests);
@@ -94,9 +94,9 @@ namespace lexer_test
         public void TestNextToken7()
         {
             string input = "\"foo bar\"";
-            var tests = new List<Token>() {
-                new Token() {Type = STRING, Literal = "foo bar"},
-                new Token() {Type = EOF, Literal = ""},
+            var tests = new List<Token>{
+                new Token{Type = STRING, Literal = "foo bar"},
+                new Token{Type = EOF, Literal = ""},
             };
 
             TestCore(input, tests);
@@ -112,44 +112,44 @@ namespace lexer_test
                             };
                             let result = add(five, ten);";
 
-            var tests = new List<Token>() {
-                new Token() {Type = LET, Literal = "let"},
-                new Token() {Type = IDENT, Literal = "five"},
-                new Token() {Type = ASSIGN, Literal = "="},
-                new Token() {Type = INT, Literal = "5"},
-                new Token() {Type = SEMICOLON, Literal = ";"},
-                new Token() {Type = LET, Literal = "let"},
-                new Token() {Type = IDENT, Literal = "ten"},
-                new Token() {Type = ASSIGN, Literal = "="},
-                new Token() {Type = INT, Literal = "10"},
-                new Token() {Type = SEMICOLON, Literal = ";"},
-                new Token() {Type = LET, Literal = "let"},
-                new Token() {Type = IDENT, Literal = "add"},
-                new Token() {Type = ASSIGN, Literal = "="},
-                new Token() {Type = FUNCTION, Literal = "fn"},
-                new Token() {Type = LPAREN, Literal = "("},
-                new Token() {Type = IDENT, Literal = "x"},
-                new Token() {Type = COMMA, Literal = ","},
-                new Token() {Type = IDENT, Literal = "y"},
-                new Token() {Type = RPAREN, Literal = ")"},
-                new Token() {Type = LBRACE, Literal = "{"},
-                new Token() {Type = IDENT, Literal = "x"},
-                new Token() {Type = PLUS, Literal = "+"},
-                new Token() {Type = IDENT, Literal = "y"},
-                new Token() {Type = SEMICOLON, Literal = ";"},
-                new Token() {Type = RBRACE, Literal = "}"},
-                new Token() {Type = SEMICOLON, Literal = ";"},
-                new Token() {Type = LET, Literal = "let"},
-                new Token() {Type = IDENT, Literal = "result"},
-                new Token() {Type = ASSIGN, Literal = "="},
-                new Token() {Type = IDENT, Literal = "add"},
-                new Token() {Type = LPAREN, Literal = "("},
-                new Token() {Type = IDENT, Literal = "five"},
-                new Token() {Type = COMMA, Literal = ","},
-                new Token() {Type = IDENT, Literal = "ten"},
-                new Token() {Type = RPAREN, Literal = ")"},
-                new Token() {Type = SEMICOLON, Literal = ";"},
-                new Token() {Type = EOF, Literal = ""},
+            var tests = new List<Token>{
+                new Token{Type = LET, Literal = "let"},
+                new Token{Type = IDENT, Literal = "five"},
+                new Token{Type = ASSIGN, Literal = "="},
+                new Token{Type = INT, Literal = "5"},
+                new Token{Type = SEMICOLON, Literal = ";"},
+                new Token{Type = LET, Literal = "let"},
+                new Token{Type = IDENT, Literal = "ten"},
+                new Token{Type = ASSIGN, Literal = "="},
+                new Token{Type = INT, Literal = "10"},
+                new Token{Type = SEMICOLON, Literal = ";"},
+                new Token{Type = LET, Literal = "let"},
+                new Token{Type = IDENT, Literal = "add"},
+                new Token{Type = ASSIGN, Literal = "="},
+                new Token{Type = FUNCTION, Literal = "fn"},
+                new Token{Type = LPAREN, Literal = "("},
+                new Token{Type = IDENT, Literal = "x"},
+                new Token{Type = COMMA, Literal = ","},
+                new Token{Type = IDENT, Literal = "y"},
+                new Token{Type = RPAREN, Literal = ")"},
+                new Token{Type = LBRACE, Literal = "{"},
+                new Token{Type = IDENT, Literal = "x"},
+                new Token{Type = PLUS, Literal = "+"},
+                new Token{Type = IDENT, Literal = "y"},
+                new Token{Type = SEMICOLON, Literal = ";"},
+                new Token{Type = RBRACE, Literal = "}"},
+                new Token{Type = SEMICOLON, Literal = ";"},
+                new Token{Type = LET, Literal = "let"},
+                new Token{Type = IDENT, Literal = "result"},
+                new Token{Type = ASSIGN, Literal = "="},
+                new Token{Type = IDENT, Literal = "add"},
+                new Token{Type = LPAREN, Literal = "("},
+                new Token{Type = IDENT, Literal = "five"},
+                new Token{Type = COMMA, Literal = ","},
+                new Token{Type = IDENT, Literal = "ten"},
+                new Token{Type = RPAREN, Literal = ")"},
+                new Token{Type = SEMICOLON, Literal = ";"},
+                new Token{Type = EOF, Literal = ""},
             };
 
             TestCore(input, tests);
@@ -161,16 +161,16 @@ namespace lexer_test
         {
             string input = "=+(){},;";
            
-            var tests = new List<Token>() {
-                new Token() {Type = ASSIGN, Literal = "="},
-                new Token() {Type = PLUS, Literal = "+"},
-                new Token() {Type = LPAREN, Literal = "("},
-                new Token() {Type = RPAREN, Literal = ")"},
-                new Token() {Type = LBRACE, Literal = "{"},
-                new Token() {Type = RBRACE, Literal = "}"},
-                new Token() {Type = COMMA,  Literal = ","},
-                new Token() {Type = SEMICOLON, Literal = ";"},
-                new Token() {Type = EOF, Literal = ""},
+            var tests = new List<Token>{
+                new Token{Type = ASSIGN, Literal = "="},
+                new Token{Type = PLUS, Literal = "+"},
+                new Token{Type = LPAREN, Literal = "("},
+                new Token{Type = RPAREN, Literal = ")"},
+                new Token{Type = LBRACE, Literal = "{"},
+                new Token{Type = RBRACE, Literal = "}"},
+                new Token{Type = COMMA,  Literal = ","},
+                new Token{Type = SEMICOLON, Literal = ";"},
+                new Token{Type = EOF, Literal = ""},
             };
 
             TestCore(input, tests);

@@ -14,6 +14,7 @@ namespace evaluator_test
         {
             public string input { get; set; }
             public int expected { get; set; }
+            
             public TestEvalIntegerExpressionCase(string i, int e)
             {
                 input = i;
@@ -37,6 +38,7 @@ namespace evaluator_test
         {
             public string input { get; set; }
             public object expected { get; set; }
+           
             public TestIfElseExpressionsCase(string i, object e)
             {
                 input = i;
@@ -48,6 +50,7 @@ namespace evaluator_test
         {
             public string input { get; set; }
             public int expected { get; set; }
+          
             public TestReturnStatementsCase(string i, int e)
             {
                 input = i;
@@ -59,6 +62,7 @@ namespace evaluator_test
         {
             public string input { get; set; }
             public string expected { get; set; }
+           
             public TestErrorHandlingCase(string i, string e)
             {
                 input = i;
@@ -70,6 +74,7 @@ namespace evaluator_test
         {
             public string input { get; set; }
             public int expected { get; set; }
+           
             public TestLetStatementsCase(string i, int e)
             {
                 input = i;
@@ -80,7 +85,7 @@ namespace evaluator_test
         [Fact]
         public void TestLetStatements()
         {
-            var tests = new List<TestLetStatementsCase>() {
+            var tests = new List<TestLetStatementsCase> {
                 new TestLetStatementsCase("let a = 5; a;", 5),
                 new TestLetStatementsCase("let a = 5 * 5; a;", 25),
                 new TestLetStatementsCase("let a = 5; let b = a; b;", 5),
@@ -94,7 +99,7 @@ namespace evaluator_test
         [Fact]
         public void TestErrorHandling()
         {
-            var tests = new List<TestErrorHandlingCase>() {
+            var tests = new List<TestErrorHandlingCase> {
                 new TestErrorHandlingCase("5 + True;", "type mismatch: INTEGER + BOOLEAN"),
                 new TestErrorHandlingCase("5 + True; 5;", "type mismatch: INTEGER + BOOLEAN"),
                 new TestErrorHandlingCase("-True", "unknown operator: -BOOLEAN"),
@@ -117,7 +122,7 @@ namespace evaluator_test
         [Fact]
         public void TestReturnStatements()
         {
-            var tests = new List<TestReturnStatementsCase>() {
+            var tests = new List<TestReturnStatementsCase> {
                 new TestReturnStatementsCase("return 10;", 10),
                 new TestReturnStatementsCase("return 10; 9;", 10),
                 new TestReturnStatementsCase("return 2 * 5; 9;", 10),
@@ -136,7 +141,7 @@ namespace evaluator_test
         [Fact]
         public void TestIfElseExpressions()
         {
-             var tests = new List<TestIfElseExpressionsCase>() {
+             var tests = new List<TestIfElseExpressionsCase> {
                 new TestIfElseExpressionsCase("if (True) { 10 }", 10),
                 new TestIfElseExpressionsCase("if (False) { 10 }", null),
                 new TestIfElseExpressionsCase("if (1) { 10 }", 10),
@@ -176,6 +181,7 @@ namespace evaluator_test
         {
             public string input { get; set; }
             public int expected { get; set; }
+
             public TestFunctionApplicationCase(string i, int e)
             {
                 input = i;
@@ -186,7 +192,7 @@ namespace evaluator_test
         [Fact]
         public void TestFunctionApplication()
         {
-            var tests = new List<TestFunctionApplicationCase>() {
+            var tests = new List<TestFunctionApplicationCase> {
                 new TestFunctionApplicationCase("let identity = fn(x) { x; }; identity(5);", 5),
                 new TestFunctionApplicationCase("let identity = fn(x) { return x; }; identity(5);", 5),
                 new TestFunctionApplicationCase("let double = fn(x) { x * 2; }; double(5);", 10),
@@ -209,7 +215,7 @@ namespace evaluator_test
         [Fact]
         public void TestEvalBooleanExpression()
         {
-            var tests = new List<TestEvalBooleanExpressionCase>() {
+            var tests = new List<TestEvalBooleanExpressionCase> {
                 new TestEvalBooleanExpressionCase("True", true),
                 new TestEvalBooleanExpressionCase("False", false),
                 new TestEvalBooleanExpressionCase("1 < 2", true),
@@ -241,6 +247,7 @@ namespace evaluator_test
         {
             public string input { get; set; }
             public bool expected { get; set; }
+
             public TestBangOperatorCase(string i, bool e)
             {
                 input = i;
@@ -251,7 +258,7 @@ namespace evaluator_test
         [Fact]
         public void TestBangOperator()
         {
-            var tests = new List<TestBangOperatorCase>() {
+            var tests = new List<TestBangOperatorCase> {
                 new TestBangOperatorCase("!True", false),
                 new TestBangOperatorCase("!False", true),
                 new TestBangOperatorCase("!5", false),
@@ -314,7 +321,7 @@ namespace evaluator_test
         [Fact]
         public void TestBuiltinFunctions()
         {
-            var tests = new List<TestBuiltinFunctionsCase>() {
+            var tests = new List<TestBuiltinFunctionsCase> {
                 new TestBuiltinFunctionsCase("len(\"\")", 0),
                 new TestBuiltinFunctionsCase("len(\"four\")", 4),
                 new TestBuiltinFunctionsCase("len(\"hello world\")", 11),
@@ -340,7 +347,7 @@ namespace evaluator_test
         [Fact]
         public void TestEvalIntegerExpression()
         {
-            var tests = new List<TestEvalIntegerExpressionCase>() {
+            var tests = new List<TestEvalIntegerExpressionCase> {
                 new TestEvalIntegerExpressionCase("5", 5),
                 new TestEvalIntegerExpressionCase("10", 10),
                 new TestEvalIntegerExpressionCase("-5", -5),

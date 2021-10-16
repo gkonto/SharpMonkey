@@ -80,7 +80,7 @@ namespace ParserTest
         [Fact]
         public void TestParsingPrefixExpressions()
         {
-            var tests = new List<PrefixTest>() {
+            var tests = new List<PrefixTest>{
                 new PrefixTest("!5;", "!", 5),
                 new PrefixTest("-15", "-", 15),
                 new PrefixTest("!True;", "!", true),
@@ -198,7 +198,7 @@ namespace ParserTest
         [Fact]
         public void TestOperatorPrecedenceParsing()
         {
-            var tests = new List<OperatorPrecedenceTest>() {
+            var tests = new List<OperatorPrecedenceTest>{
                 new OperatorPrecedenceTest("-a * b", "((-a) * b)"),
                 new OperatorPrecedenceTest("!-a", "(!(-a))"),
                 new OperatorPrecedenceTest("a + b + c", "((a + b) + c)"),
@@ -366,7 +366,7 @@ namespace ParserTest
         [Fact]
         public void TestParsingInfixExpressions()
         {
-            var tests = new List<InfixTest>() {
+            var tests = new List<InfixTest> {
                 new InfixTest("5 + 5;", 5, "+", 5),
                 new InfixTest("5 - 5;", 5, "-", 5),
                 new InfixTest("5 * 5;", 5, "*", 5),
@@ -482,7 +482,7 @@ namespace ParserTest
         [Fact]
         public void TestLetStatements()
         {
-            List<TestLetStatementCase> tests = new List<TestLetStatementCase>() {
+            List<TestLetStatementCase> tests = new List<TestLetStatementCase>{
                 new TestLetStatementCase("let x = 5;", "x", 5),
                 new TestLetStatementCase("let y = True;", "y", true),
                 new TestLetStatementCase("let foobar = y;", "foobar", "y")

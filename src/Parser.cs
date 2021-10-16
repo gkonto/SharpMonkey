@@ -22,14 +22,13 @@ namespace monkey
     public class Parser
     {
         Lexer lexer;
-        Token curToken = new Token() {Type = ILLEGAL, Literal = ""};
-        Token peekToken = new Token() {Type = ILLEGAL, Literal = ""};
+        Token curToken = new Token{Type = ILLEGAL, Literal = ""};
+        Token peekToken = new Token{Type = ILLEGAL, Literal = ""};
         public List<string> errors { set; get; }
         IDictionary<TokenType, prefixParseFn> prefixParseFns = new Dictionary<TokenType, prefixParseFn>();
         IDictionary<TokenType, infixParseFn> infixParseFns = new Dictionary<TokenType, infixParseFn>();
         IDictionary<TokenType, Precedence> precedences = 
-            new Dictionary<TokenType, Precedence>()
-            {
+            new Dictionary<TokenType, Precedence>{
                 { EQ, EQUALS },
                 { NOT_EQ, EQUALS },
                 { LT, LESSGREATER },
@@ -72,7 +71,7 @@ namespace monkey
 
         public BlockStatement parseBlockStatement()
         {
-            BlockStatement block = new BlockStatement() {token = curToken};
+            BlockStatement block = new BlockStatement{token = curToken};
             nextToken();
             while (!curTokenIs(RBRACE) && !curTokenIs(EOF)) {
                 Statement stmt = parseStatement();
@@ -86,12 +85,12 @@ namespace monkey
 
         public Expression parseStringLiteral()
         {
-            return new StringLiteral() {token = curToken, Value = curToken.Literal};
+            return new StringLiteral{token = curToken, Value = curToken.Literal};
         }
 
         public Expression parseFunctionLiteral()
         {
-            FunctionLiteral lit = new FunctionLiteral() {};
+            FunctionLiteral lit = new FunctionLiteral();
             if (!expectPeek(LPAREN)) {
                 return null;
             }
@@ -117,13 +116,13 @@ namespace monkey
 
             nextToken();
 
-            Identifier ident = new Identifier() {token = curToken, value = curToken.Literal};
+            Identifier ident = new Identifier{token = curToken, value = curToken.Literal};
             identifiers.Add(ident);
 
             while (peekTokenIs(COMMA)) {
                 nextToken();
                 nextToken();
-                Identifier ident2 = new Identifier() {token = curToken, value = curToken.Literal};
+                Identifier ident2 = new Identifier{token = curToken, value = curToken.Literal};
                 identifiers.Add(ident2);
             }
 
@@ -136,7 +135,7 @@ namespace monkey
 
         public Expression parseIfExpression()
         {
-            IfExpression expression = new IfExpression() {token = curToken};
+            IfExpression expression = new IfExpression{token = curToken};
             if (!expectPeek(LPAREN)) {
                 return null;
             }
@@ -180,13 +179,13 @@ namespace monkey
 
         public Expression parseBoolean()
         {
-            return new AstBool() {token = curToken, value = curTokenIs(TRUE)};
+            return new AstBool{token = curToken, value = curTokenIs(TRUE)};
         }
 
 
         public Expression parseCallExpression(Expression fun)
         {
-            CallExpression exp = new CallExpression() {t = curToken, function = fun, arguments = parseCallArguments()};
+            CallExpression exp = new CallExpression{t = curToken, function = fun, arguments = parseCallArguments()};
             return exp;    
         }
 
@@ -219,7 +218,7 @@ namespace monkey
 
         public Expression parseInfixExpression(Expression lhs)
         {
-            InfixExpression expression = new InfixExpression() {
+            InfixExpression expression = new InfixExpression{
                 token = curToken,
                 Operator = curToken.Literal,
                 left = lhs
@@ -235,7 +234,7 @@ namespace monkey
 
         public Expression parsePrefixExpression()
         {
-            PrefixExpression expression = new PrefixExpression() {token = curToken, Operator = curToken.Literal};
+            PrefixExpression expression = new PrefixExpression{token = curToken, Operator = curToken.Literal};
             nextToken();
             expression.right = parseExpression(PREFIX);
             return expression;
@@ -306,7 +305,7 @@ namespace monkey
 
         public Expression parseIdentifier()
         {
-            return new Identifier() {token = curToken, value = curToken.Literal };
+            return new Identifier{token = curToken, value = curToken.Literal };
         }
 
         public ReturnStatement parseReturnStatement()
@@ -336,7 +335,7 @@ namespace monkey
 
         public Expression parseIntegerLiteral()
         {
-            IntegerLiteral lit = new IntegerLiteral() {token = curToken};
+            IntegerLiteral lit = new IntegerLiteral{token = curToken};
         
             try {
                 int value = int.Parse(curToken.Literal);
@@ -374,7 +373,7 @@ namespace monkey
 
         public ExpressionStatement parseExpressionStatement()
         {
-            ExpressionStatement stmt = new ExpressionStatement() {token = curToken};    
+            ExpressionStatement stmt = new ExpressionStatement{token = curToken};    
             stmt.expression = parseExpression(LOWEST);
             
             if (peekTokenIs(SEMICOLON)) {
@@ -400,13 +399,13 @@ namespace monkey
 
         public LetStatement parseLetStatement()
         {
-            LetStatement stmt = new LetStatement() {token = curToken};
+            LetStatement stmt = new LetStatement{token = curToken};
 
             if (!expectPeek(IDENT)) {
                 return null;
             }
 
-            stmt.name = new Identifier() {token = curToken, value = curToken.Literal};
+            stmt.name = new Identifier{token = curToken, value = curToken.Literal};
 
             if (!expectPeek(ASSIGN)) {
                 return null;

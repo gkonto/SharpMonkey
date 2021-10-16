@@ -7,8 +7,8 @@ namespace monkey
     public class Evaluator
     {
         public static Dictionary<string, Builtin> Builtins = new Dictionary<string, Builtin>() {
-            {"len", new Builtin() {Fn = len} },
-            {"toDot", new Builtin() { Fn = toDot}}
+            {"len", new Builtin{Fn = len}},
+            {"toDot", new Builtin{Fn = toDot}}
         };
 
         public static EvalObject len(List<EvalObject> args) 
@@ -18,7 +18,7 @@ namespace monkey
             }
             
             if (args[0] is StrObj str_arg) {
-                return new Integer() { Value = str_arg.Value.Length };
+                return new Integer{ Value = str_arg.Value.Length };
             } else {
                 return new Error($"argument to 'len' not supported, got {args[0].Type()}");
             }
@@ -37,14 +37,14 @@ namespace monkey
             }
         }
 
-        public static readonly BoolObj TRUE = new BoolObj { Value = true };
-        public readonly static BoolObj FALSE = new BoolObj { Value = false };
+        public static readonly BoolObj TRUE = new BoolObj{Value = true};
+        public readonly static BoolObj FALSE = new BoolObj{Value = false};
         public readonly static Null  NULL = new Null();
 
         public static EvalObject Eval(Node node, MEnvironment env)
         {
             if (node is IntegerLiteral i) {
-                return new Integer { Value = i.value };
+                return new Integer{Value = i.value };
             } else if (node is Program p) {
                 return evalProgram(p, env);
             } else if (node is ExpressionStatement stmt) {
@@ -76,7 +76,7 @@ namespace monkey
             } else if (node is FunctionLiteral funlit) {
                 List<Identifier> par = funlit.parameters;
                 BlockStatement block = funlit.body;
-                return new Function() { Parameters = par, Env = env, Body = block};
+                return new Function{ Parameters = par, Env = env, Body = block};
             } else if (node is CallExpression ce) {
                 EvalObject function = Eval(ce.function, env);
                 if (isError(function)) {
@@ -89,9 +89,9 @@ namespace monkey
                 }
                 return applyFunction(function, args);
             } else if (node is StringLiteral str) {
-                return new StrObj() { Value = str.Value };
+                return new StrObj{Value = str.Value};
             } else if (node is DotStatement dotStatement) {
-                return new DotObj() { Value = dotStatement.right };
+                return new DotObj{Value = dotStatement.right};
             }
 
             return null;
@@ -233,13 +233,13 @@ namespace monkey
             int rightVal = ((Integer)right).Value;
 
             if (op == "+") {
-                return new Integer {Value = leftVal + rightVal};
+                return new Integer{Value = leftVal + rightVal};
             } else if (op == "-") {
-                return new Integer {Value = leftVal - rightVal};
+                return new Integer{Value = leftVal - rightVal};
             } else if (op == "*") {
-                return new Integer {Value = leftVal * rightVal};
+                return new Integer{Value = leftVal * rightVal};
             } else if (op == "/") {
-                return new Integer {Value = leftVal / rightVal};
+                return new Integer{Value = leftVal / rightVal};
             } else if (op == "<") {
                 return nativeBoolToBooleanObject(leftVal < rightVal);
             } else if (op == ">") {
@@ -278,7 +278,7 @@ namespace monkey
             }
             string leftVal = ((StrObj)left).Value;
             string rightVal = ((StrObj)right).Value;
-            return new StrObj() {Value = leftVal + rightVal};
+            return new StrObj{Value = leftVal + rightVal};
         }
 
 
