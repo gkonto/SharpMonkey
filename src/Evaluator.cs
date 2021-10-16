@@ -163,7 +163,7 @@ namespace monkey
         private static bool isError(EvalObject o)
         {
             if (o != null) {
-                return o.Type() == EvalObject.ERROR_OBJ;
+                return o.Type() == ObjectTypes.ERROR;
             }
             return false;
         }
@@ -205,8 +205,8 @@ namespace monkey
             foreach (Statement s in bs.statements) {
                 result = Eval(s, env);
                 if (result != null) {
-                    string rt = result.Type();
-                    if (rt == EvalObject.RETURN_VALUE_OBJ || rt == EvalObject.ERROR_OBJ) {
+                    ObjectTypes rt = result.Type();
+                    if (rt == ObjectTypes.RETURN_VALUE || rt == ObjectTypes.ERROR) {
                         return result;
                     }
                 }
@@ -255,7 +255,7 @@ namespace monkey
 
         public static EvalObject evalInfixExpression(string op, EvalObject left, EvalObject right)
         {
-            if (left.Type() == EvalObject.INTEGER_OBJ && right.Type() == EvalObject.INTEGER_OBJ) {
+            if (left.Type() == ObjectTypes.INTEGER && right.Type() == ObjectTypes.INTEGER) {
                 return evalIntegerInfixExpression(op, left, right);
             } else if (op == "==") {
                 return nativeBoolToBooleanObject(left == right);
@@ -263,7 +263,7 @@ namespace monkey
                 return nativeBoolToBooleanObject(left != right);
             } else if (left.Type() != right.Type()) {
                 return new Error($"type mismatch: {left.Type()} {op} {right.Type()}");
-            } else if (left.Type() == EvalObject.STRING_OBJ && right.Type() == EvalObject.STRING_OBJ) {
+            } else if (left.Type() == ObjectTypes.STRING && right.Type() == ObjectTypes.STRING) {
                 return evalStringInfixExpression(op, left, right);
             } else {
                 return new Error($"unknown operator: {left.Type()} {op} {right.Type()}");
@@ -309,7 +309,7 @@ namespace monkey
 
         public static EvalObject evalMinusPrefixOperatorExpression(EvalObject right)
         {
-            if (right.Type() != EvalObject.INTEGER_OBJ) {
+            if (right.Type() != ObjectTypes.INTEGER) {
                 return new Error($"unknown operator: -{right.Type()}");
             }
             int value = ((Integer)right).Value;
