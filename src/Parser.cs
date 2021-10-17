@@ -101,13 +101,17 @@ namespace monkey
             }
 
             lit.body = parseBlockStatement();
+            ConvertIdentifiersVisitor civ = new ConvertIdentifiersVisitor(lit.parameters);
+            lit.body.Accept(civ);
+
             return lit;
         }
 
 
-        public List<Identifier> parseFunctionParameters()
+        public List<FunctionParamIdentifier> parseFunctionParameters() // parse parameters here
         {
-            List<Identifier> identifiers = new List<Identifier>();
+            List<FunctionParamIdentifier> identifiers = new List<FunctionParamIdentifier>();
+            int i = 0;
 
             if (peekTokenIs(RPAREN)) {
                 nextToken();
@@ -116,14 +120,17 @@ namespace monkey
 
             nextToken();
 
-            Identifier ident = new Identifier{token = curToken, value = curToken.Literal};
-            identifiers.Add(ident);
+            identifiers.Add(
+                new FunctionParamIdentifier(curToken, curToken.Literal, i++)
+            );
 
             while (peekTokenIs(COMMA)) {
                 nextToken();
                 nextToken();
-                Identifier ident2 = new Identifier{token = curToken, value = curToken.Literal};
-                identifiers.Add(ident2);
+        
+                identifiers.Add(
+                    new FunctionParamIdentifier(curToken, curToken.Literal, i++)
+                );
             }
 
             if (!expectPeek(RPAREN)) {

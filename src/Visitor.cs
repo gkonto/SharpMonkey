@@ -19,7 +19,140 @@ namespace monkey
         void visit(LetStatement e);
         void visit(Identifier e);
         void visit(ReturnStatement e);
+    }
 
+    public class ConvertIdentifiersVisitor : Visitor
+    {
+        List<FunctionParamIdentifier> identifiers;
+        public ConvertIdentifiersVisitor(List<FunctionParamIdentifier> idents)
+        {
+            identifiers = idents;
+        }
+
+        private (int, bool) findIdentifierIndex(Identifier ident)
+        {
+            for (int i = 0; i < identifiers.Count; ++i) {
+                if (identifiers[i].value == ident.value) {
+                    return (i, true);
+                }
+            }
+            return (-1, false);
+        }
+
+        public void visit(IntegerLiteral e) { /* Do nothing */}
+        
+        public void visit(InfixExpression e)
+        {
+            if (e.left is Identifier ident) {
+                var (index, valid) = findIdentifierIndex(ident);
+                if (valid) {
+                    e.left = new FunctionParamIdentifier(ident, index);
+                }
+            } else {
+                e.left.Accept(this);
+            }
+
+            if (e.right is Identifier ident2) {
+                var (index, valid) = findIdentifierIndex(ident2);
+                if (valid) {
+                    e.right = new FunctionParamIdentifier(ident2, index);
+                }
+            } else {
+                e.right.Accept(this);
+            }
+        }
+
+        public void visit(Program e) {}
+        public void visit(CallExpression e)
+        {
+            for (int i = 0; i < e.arguments.Count; ++i) {
+                if (e.arguments[i] is Identifier ident) {
+                    var (index, valid) = findIdentifierIndex(ident);
+                    if (valid) {
+                        e.arguments[i] = new FunctionParamIdentifier(ident, index);
+                    }
+                } else {
+                    e.arguments[i].Accept(this);
+                }
+            }
+        }
+
+        public void visit(StringLiteral e) {}
+        public void visit(FunctionLiteral e)
+        {
+            e.body.Accept(this);
+        }
+
+        public void visit(AstBool e){}
+        public void visit(DotStatement e) {}
+        public void visit(PrefixExpression e)
+        {
+            if (e.right is Identifier ident) {
+                var (index, valid) = findIdentifierIndex(ident);
+                if (valid) {
+                    e.right = new FunctionParamIdentifier(ident, index);
+                }
+            }
+            e.right.Accept(this);
+             
+        }
+
+        public void visit(BlockStatement e)
+        {
+            foreach (Statement stmt in e.statements) {
+                stmt.Accept(this);
+            }
+        }
+
+        public void visit(IfExpression e)
+        {
+            if (e.condition is Identifier ident) {
+                var (index, valid) = findIdentifierIndex(ident);
+                if (valid) {
+                    e.condition = new FunctionParamIdentifier(ident, index);
+                }
+            } else {
+                e.condition.Accept(this);
+            }
+            e.consequence.Accept(this);
+            e.alternative.Accept(this);
+        }
+
+        public void visit(ExpressionStatement e)
+        {
+            if (e.expression is Identifier ident) {
+                var (index, valid) = findIdentifierIndex(ident);
+                if (valid) {
+                    e.expression = new FunctionParamIdentifier(ident, index);
+                }
+            }    
+            e.expression.Accept(this);
+        }
+
+        public void visit(LetStatement e)
+        {
+            if (e.value is Identifier ident) {
+                var (index, valid) = findIdentifierIndex(ident);
+                if (valid) {
+                    e.value = new FunctionParamIdentifier(ident, index);
+                    return;
+                }
+            }
+            e.value.Accept(this);
+        }
+
+        public void visit(Identifier e) { /* Do nothing */}
+        public void visit(ReturnStatement e)
+        {
+            if (e.returnValue is Identifier ident) {
+                var (index, valid) = findIdentifierIndex(ident);
+                if (valid) {
+                    e.returnValue = new FunctionParamIdentifier(ident, index);
+                    return;
+                }
+            }
+            e.returnValue.Accept(this);
+        }
     }
 
     public class DotBuilder : Visitor

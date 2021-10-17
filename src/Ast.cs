@@ -105,7 +105,7 @@ namespace monkey
     public class FunctionLiteral : Expression
     {
         public Token token;
-        public List<Identifier> parameters;
+        public List<FunctionParamIdentifier> parameters;
         public BlockStatement body;
 
         public override string TokenLiteral()
@@ -404,7 +404,25 @@ namespace monkey
         }
 
         public override void Accept(Visitor v) { v.visit(this); }
+    }
 
+    public class FunctionParamIdentifier : Identifier
+    {
+        public int param_index;
+
+        public FunctionParamIdentifier(Token tok, string v, int index)
+        {
+            token = tok;
+            value = v;
+            param_index = index;
+        }
+
+        public FunctionParamIdentifier(Identifier ident, int index)
+        {
+            token = ident.token;
+            value = ident.value;
+            param_index = index;
+        }
     }
 
     public class IntegerLiteral : Expression

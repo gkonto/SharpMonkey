@@ -74,9 +74,10 @@ namespace monkey
             } else if (node is Identifier ident) {
                 return evalIdentifier(ident, env);  
             } else if (node is FunctionLiteral funlit) {
-                List<Identifier> par = funlit.parameters;
-                BlockStatement block = funlit.body;
-                return new Function{ Parameters = par, Env = env, Body = block};
+                List<FunctionParamIdentifier> par = funlit.parameters;
+                BlockStatement block = funlit.body; 
+                Function f = new Function{ Parameters = par, Env = env, Body = block};
+                return f;
             } else if (node is CallExpression ce) {
                 EvalObject function = Eval(ce.function, env);
                 if (isError(function)) {
@@ -110,12 +111,10 @@ namespace monkey
             }
         }
 
-        private static MEnvironment extendFunctionEnv(Function fn, List<EvalObject> args)
+        private static MFunctionEnv extendFunctionEnv(Function fn, List<EvalObject> args)
         {
-            MEnvironment env = new MEnvironment(fn.Env);
-            for (int i = 0; i < fn.Parameters.Count; i++) {
-                env.Set(fn.Parameters[i].value, args[i]);
-            }
+            MFunctionEnv env = new MFunctionEnv(fn.Env);
+            env.setArgumentVals(args);
             return env;
         }
 
@@ -145,7 +144,7 @@ namespace monkey
 
         private static EvalObject evalIdentifier(Identifier ident, MEnvironment env)
         {
-            EvalObject o = env.Get(ident.value);
+            EvalObject o = env.Get(ident);
             if (o != null) {
                 return o;
             }

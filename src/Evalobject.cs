@@ -60,10 +60,11 @@ namespace monkey
 
     public class Function : EvalObject
     {
-        public List<Identifier> Parameters;
+        public List<FunctionParamIdentifier> Parameters;
         public BlockStatement Body;
         public MEnvironment Env;
         public ObjectTypes Type() { return ObjectTypes.FUNCTION; }
+
         public string Inspect()
         {
             string input = "";
