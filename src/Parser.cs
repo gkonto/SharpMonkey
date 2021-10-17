@@ -90,7 +90,7 @@ namespace monkey
 
         public Expression parseFunctionLiteral()
         {
-            FunctionLiteral lit = new FunctionLiteral();
+            FunctionLiteral lit = new FunctionLiteral{token = curToken};
             if (!expectPeek(LPAREN)) {
                 return null;
             }
