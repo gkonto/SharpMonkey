@@ -81,15 +81,12 @@ The project contains two executables:
 * the REPL.
 * A Quality Assurance (qa/) mechanism for the project.
 
- You can compile the project using the CMAKE cross-platform software tool.
- 
-__REPL compilation__
 dotnet run --configuration debug
+
 dotnet run --configuration release
 
-An executable will be created in the build/ directory
-
 __QA mechanism compilation__
+
 cd qa; dotnet run test
 
 
