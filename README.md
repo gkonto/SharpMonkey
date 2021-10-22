@@ -1,4 +1,4 @@
-## Monkey Kong In C++   <img src="conf/gorilla-facing-right.png" width="40">
+## Monkey Kong In C#   <img src="conf/gorilla-facing-right.png" width="40">
 Monkey is a programming language built by reading through Writing An Interpreter In Go in C#.
 
 Monkey is implemented as a tree-walking interpreter.
